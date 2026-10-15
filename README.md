@@ -30,6 +30,8 @@ uv run python manage.py migrate
 uv run python manage.py runserver
 ```
 
+O login usa a matrícula e a senha do SUAP pela biblioteca [suapy](https://pypi.org/project/suapy/). Para apontar para outra instituição, defina `SUAP_URL`.
+
 ## Documentação
 
 - [Documento técnico (PDF)](docs/documento-tecnico.pdf) · [DOCX](docs/documento-tecnico.docx) · [versão online](https://docs.google.com/document/d/1b8KSydmvHhX-QG3A-H45OCtBf2pQ6ZSLaj62nRPDUr4/edit?usp=sharing)

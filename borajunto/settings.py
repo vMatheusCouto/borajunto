@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'caronas',
+    'contas',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +57,7 @@ ROOT_URLCONF = 'borajunto.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,3 +123,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Autenticação: estudantes entram pelo SUAP; o ModelBackend fica para o Django Admin.
+AUTHENTICATION_BACKENDS = [
+    'contas.backends.SuapBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+LOGIN_URL = 'contas:entrar'
+LOGIN_REDIRECT_URL = 'contas:inicio'
+LOGOUT_REDIRECT_URL = 'contas:entrar'
+
+SUAP_URL = os.environ.get('SUAP_URL', 'https://suap.ifrn.edu.br')

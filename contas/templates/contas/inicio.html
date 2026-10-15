@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<h1>Olá, {{ user.first_name|default:user.username }}</h1>
+{% if user.perfil %}
+  <p>{{ user.perfil.curso }}{% if user.perfil.campus %} · campus {{ user.perfil.campus }}{% endif %}</p>
+  <p>Matrícula {{ user.perfil.matricula }}</p>
+{% endif %}
+{% endblock %}
