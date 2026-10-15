@@ -4,9 +4,11 @@ from django.db import models
 
 class Carona(models.Model):
     class Status(models.TextChoices):
-        ABERTA = 'aberta', 'Aberta'
-        CANCELADA = 'cancelada', 'Cancelada'
+        PUBLICADA = 'publicada', 'Publicada'
+        LOTADA = 'lotada', 'Lotada'
+        EM_ANDAMENTO = 'em_andamento', 'Em andamento'
         CONCLUIDA = 'concluida', 'Concluída'
+        CANCELADA = 'cancelada', 'Cancelada'
 
     motorista = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -15,12 +17,14 @@ class Carona(models.Model):
     )
     origem = models.CharField(max_length=255)
     destino = models.CharField(max_length=255)
+    ponto_encontro = models.CharField(max_length=255)
     data_hora = models.DateTimeField()
     vagas = models.PositiveSmallIntegerField()
+    observacoes = models.TextField(blank=True)
     status = models.CharField(
-        max_length=10,
+        max_length=12,
         choices=Status.choices,
-        default=Status.ABERTA,
+        default=Status.PUBLICADA,
     )
     criada_em = models.DateTimeField(auto_now_add=True)
 
