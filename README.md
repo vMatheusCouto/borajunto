@@ -11,7 +11,7 @@ Aplicativo web de caronas estudantis, desenvolvido em Django como Projeto Integr
 - Publicação, edição e cancelamento de caronas, com rota, distância e duração pelo Google Maps
 - Busca por origem, destino e data, e reservas que o motorista aceita ou recusa
 - Notificações internas, lembrete 60 minutos antes da carona e histórico
-- Avaliação por estrelas após a carona
+- Avaliação por estrelas a cada carona concluída, com reputação calculada pela média das avaliações
 - Denúncias, moderadas pelo Django Admin
 
 Fora do MVP: app móvel nativo, chat, localização em tempo real, pagamentos e notificações push.
@@ -22,15 +22,15 @@ Fora do MVP: app móvel nativo, chat, localização em tempo real, pagamentos e 
 
 ## Como rodar
 
+Requer Python 3.14 e [uv](https://docs.astral.sh/uv/).
+
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install django
-python manage.py migrate
-python manage.py runserver
+uv sync
+uv run python manage.py migrate
+uv run python manage.py runserver
 ```
 
 ## Documentação
 
-- [Documento técnico (PDF)](docs/documento-tecnico.pdf) · [versão online](https://docs.google.com/document/d/1b8KSydmvHhX-QG3A-H45OCtBf2pQ6ZSLaj62nRPDUr4/edit?usp=sharing)
+- [Documento técnico (PDF)](docs/documento-tecnico.pdf) · [DOCX](docs/documento-tecnico.docx) · [versão online](https://docs.google.com/document/d/1b8KSydmvHhX-QG3A-H45OCtBf2pQ6ZSLaj62nRPDUr4/edit?usp=sharing)
 - [Protótipo no Figma](https://www.figma.com/design/U9l4leZCQWGA9rQyVIqIN6/Caronas-Estudantis?node-id=0-1)
