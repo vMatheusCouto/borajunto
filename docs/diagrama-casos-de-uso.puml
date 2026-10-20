@@ -1,0 +1,53 @@
+@startuml
+' Diagrama de casos de uso do BoraJunto (notação UML 2.5, uml-diagrams.org)
+' Associações sem seta; a única seta é a generalização Motorista/Passageiro -> Estudante.
+mainframe uc Casos de Uso do BoraJunto
+left to right direction
+skinparam shadowing false
+
+actor Estudante
+actor Motorista
+actor Passageiro
+actor Administrador
+actor SUAP
+actor "Google Maps" as Maps
+
+Motorista --|> Estudante
+Passageiro --|> Estudante
+
+rectangle BoraJunto {
+  usecase "UC01\nAutenticar estudante" as UC01
+  usecase "UC02\nGerenciar perfil" as UC02
+  usecase "UC07\nConsultar notificações" as UC07
+  usecase "UC12\nConsultar histórico\nde caronas" as UC12
+  usecase "UC09\nRegistrar denúncia" as UC09
+  usecase "UC03\nPublicar carona" as UC03
+  usecase "UC06\nAtualizar carona" as UC06
+  usecase "UC11\nResponder solicitações" as UC11
+  usecase "UC08\nAvaliar participante" as UC08
+  usecase "UC04\nBuscar carona" as UC04
+  usecase "UC05\nSolicitar vaga" as UC05
+  usecase "UC10\nAnalisar denúncias" as UC10
+}
+
+Estudante -- UC01
+Estudante -- UC02
+Estudante -- UC07
+Estudante -- UC12
+Estudante -- UC09
+
+Motorista -- UC03
+Motorista -- UC06
+Motorista -- UC11
+Motorista -- UC08
+
+Passageiro -- UC08
+Passageiro -- UC04
+Passageiro -- UC05
+
+Administrador -- UC10
+
+UC01 -- SUAP
+UC03 -- Maps
+UC06 -- Maps
+@enduml

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Entrar · BoraJunto{% endblock %}
+
+{% block conteudo %}
+<style>
+  .cartao { background: #fff; border: 1px solid var(--borda); border-radius: 8px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .campo { display: flex; flex-direction: column; gap: 4px; }
+  .campo input { font: inherit; padding: 10px 12px; border: 1px solid var(--borda); border-radius: 6px; }
+  .erro { color: var(--erro); margin: 0; }
+  .aviso { color: var(--suave); font-size: 14px; margin: 0; }
+  .entrar { padding: 10px; border: 0; border-radius: 6px; background: var(--destaque); color: #fff; font-weight: 600; }
+</style>
+<h1>Entrar</h1>
+<form method="post" class="cartao" novalidate>
+  {% csrf_token %}
+  {% for erro in form.non_field_errors %}
+    <p class="erro" role="alert">{{ erro }}</p>
+  {% endfor %}
+  {% for campo in form %}
+    <div class="campo">
+      <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+      {{ campo }}
+      {% for erro in campo.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
+    </div>
+  {% endfor %}
+  <input type="hidden" name="next" value="{{ next }}">
+  <button type="submit" class="entrar">Entrar com o SUAP</button>
+  <p class="aviso">Use a mesma matrícula e senha do SUAP. A senha é enviada só ao SUAP e não fica guardada no BoraJunto.</p>
+</form>
+{% endblock %}
