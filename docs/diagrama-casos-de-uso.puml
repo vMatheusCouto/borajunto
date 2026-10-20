@@ -16,22 +16,22 @@ Motorista --|> Estudante
 Passageiro --|> Estudante
 
 rectangle BoraJunto {
-  usecase "UC01\nAutenticar estudante" as UC01
-  usecase "UC02\nGerenciar perfil" as UC02
-  usecase "UC07\nConsultar notificações" as UC07
-  usecase "UC12\nConsultar histórico\nde caronas" as UC12
-  usecase "UC09\nRegistrar denúncia" as UC09
-  usecase "UC03\nPublicar carona" as UC03
-  usecase "UC13\nCalcular rota" as UC13
-  usecase "UC06\nAtualizar carona" as UC06
-  usecase "UC14\nRecalcular rota" as UC14
-  usecase "UC11\nResponder solicitações" as UC11
-  usecase "UC08\nAvaliar participante" as UC08
-  usecase "UC04\nBuscar carona" as UC04
-  usecase "UC05\nSolicitar vaga" as UC05
-  usecase "UC10\nJulgar denúncia" as UC10
-  usecase "UC15\nRemover avaliação" as UC15
-  usecase "UC16\nSuspender conta" as UC16
+  usecase "Autenticar" as UC01
+  usecase "Gerenciar perfil" as UC02
+  usecase "Consultar notificações" as UC07
+  usecase "Consultar histórico\nde caronas" as UC12
+  usecase "Registrar denúncia" as UC09
+  usecase "Publicar carona" as UC03
+  usecase "Calcular rota" as UC13
+  usecase "Atualizar carona" as UC06
+  usecase "Recalcular rota" as UC14
+  usecase "Responder solicitações" as UC11
+  usecase "Avaliar participante" as UC08
+  usecase "Buscar carona" as UC04
+  usecase "Solicitar vaga" as UC05
+  usecase "Julgar denúncia" as UC10
+  usecase "Administrar avaliações" as UC15
+  usecase "Administrar contas" as UC16
 }
 
 Estudante -- UC01
@@ -47,12 +47,12 @@ Passageiro -- UC08
 Passageiro -- UC04
 Passageiro -- UC05
 Administrador -- UC10
+Administrador -- UC15
+Administrador -- UC16
 UC01 -- SUAP
 UC13 -- Maps
 UC14 -- Maps
 
 UC03 .> UC13 : <<include>>
 UC14 .> UC06 : <<extend>>
-UC15 .> UC10 : <<extend>>
-UC16 .> UC10 : <<extend>>
 @enduml
