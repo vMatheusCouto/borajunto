@@ -1,9 +1,15 @@
+from datetime import timedelta
 from unittest.mock import patch
 
 import suapy
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
+
+from avaliacoes.models import Avaliacao
+from caronas.models import Carona, Reserva
+from notificacoes.models import Notificacao
 
 from .backends import ERRO_SUAP, ERRO_VINCULO
 from .models import Perfil
@@ -33,7 +39,11 @@ class LoginSuapTests(TestCase):
         self.assertEqual((user.first_name, user.last_name), ('Ana', 'Souza'))
         self.assertFalse(user.has_usable_password())
         self.assertEqual(user.perfil.curso, 'Informática')
-        self.assertContains(self.client.get(reverse('contas:inicio')), 'Olá, Ana')
+        inicio = self.client.get(reverse('contas:inicio'))
+        self.assertContains(inicio, '<h1>Ana</h1>', html=True)
+        self.assertContains(inicio, 'Informática · campus PF')
+        self.assertContains(inicio, 'Matrícula 20231014040001')
+        self.assertContains(inicio, reverse('contas:sair'))
 
     @patch(AUTENTICAR)
     def test_novo_login_atualiza_dados_do_suap(self, autenticar):
@@ -76,3 +86,67 @@ class LoginSuapTests(TestCase):
         resposta = self.client.post(reverse('contas:sair'))
         self.assertRedirects(resposta, reverse('contas:entrar'))
         self.assertNotIn('_auth_user_id', self.client.session)
+
+
+class InicioTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        cls.ana = User.objects.create_user('ana', first_name='Ana', last_name='Souza')
+        lucas = User.objects.create_user('lucas', first_name='Lucas', last_name='Almeida')
+        outro = User.objects.create_user('outro')
+        cls.amanha = timezone.localtime() + timedelta(days=1)
+
+        def carona(**campos):
+            dados = {'motorista': lucas, 'origem': 'Pau dos Ferros', 'destino': 'Campus Mossoró',
+                     'ponto_encontro': 'Praça da Matriz', 'data_hora': cls.amanha, 'vagas': 3,
+                     **campos}
+            return Carona.objects.create(**dados)
+
+        disponivel = carona()
+        carona(origem='Caicó', data_hora=cls.amanha + timedelta(hours=1))
+        carona(origem='Própria', motorista=cls.ana)  # RN09
+        carona(origem='Passada', data_hora=cls.amanha - timedelta(days=3))
+        carona(origem='Cancelada', status=Carona.Status.CANCELADA)
+        lotada = carona(origem='Lotada', vagas=1)
+        Reserva.objects.create(carona=lotada, passageiro=outro, status=Reserva.Status.ACEITA)
+        Reserva.objects.create(carona=disponivel, passageiro=outro, status=Reserva.Status.ACEITA)
+        concluida = carona(status=Carona.Status.CONCLUIDA,
+                           data_hora=cls.amanha - timedelta(days=5))
+        Avaliacao.objects.create(carona=concluida, avaliador=outro, avaliado=lucas, nota=5)
+        Avaliacao.objects.create(carona=concluida, avaliador=cls.ana, avaliado=lucas, nota=4)
+
+    def setUp(self):
+        self.client.force_login(self.ana)
+
+    def origens(self, resposta):
+        return [c.origem for c in resposta.context['caronas']]
+
+    def test_lista_apenas_caronas_disponiveis(self):  # RN07, RN09
+        resposta = self.client.get(reverse('contas:inicio'))
+        self.assertEqual(self.origens(resposta), ['Pau dos Ferros', 'Caicó'])
+        self.assertContains(resposta, '2 caronas encontradas')
+
+    def test_card_mostra_vagas_restantes_e_reputacao(self):  # RF14, RF17, RF25
+        resposta = self.client.get(reverse('contas:inicio'), {'origem': 'pau'})
+        self.assertEqual(self.origens(resposta), ['Pau dos Ferros'])
+        self.assertContains(resposta, '2 vagas')
+        self.assertContains(resposta, '★ 4,5')
+        self.assertContains(resposta, 'Lucas Almeida')
+
+    def test_busca_por_data(self):  # RF13
+        resposta = self.client.get(reverse('contas:inicio'), {'data': self.amanha.date().isoformat()})
+        self.assertEqual(len(self.origens(resposta)), 2)
+        resposta = self.client.get(reverse('contas:inicio'), {'data': '2000-01-01'})
+        self.assertContains(resposta, 'Nenhuma carona encontrada')
+
+    def test_parametro_invalido_mostra_erro(self):  # UC04 E1
+        resposta = self.client.get(reverse('contas:inicio'), {'data': 'ontem'})
+        self.assertContains(resposta, 'role="alert"')
+        self.assertEqual(len(self.origens(resposta)), 2)
+
+    def test_indica_notificacoes_nao_lidas(self):
+        self.assertNotContains(self.client.get(reverse('contas:inicio')), 'class="ponto"')
+        Notificacao.objects.create(destinatario=self.ana, tipo=Notificacao.Tipo.DECISAO,
+                                   mensagem='Sua vaga foi aceita.')
+        self.assertContains(self.client.get(reverse('contas:inicio')), 'class="ponto"')
