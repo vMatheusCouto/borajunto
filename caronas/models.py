@@ -33,3 +33,47 @@ class Carona(models.Model):
 
     def __str__(self):
         return f'{self.origem} → {self.destino} ({self.data_hora:%d/%m/%Y %H:%M})'
+
+
+class Reserva(models.Model):
+    """Pedido de vaga de um passageiro; vira reserva confirmada quando aceito (RN08)."""
+
+    class Status(models.TextChoices):
+        PENDENTE = 'pendente', 'Pendente'
+        ACEITA = 'aceita', 'Aceita'
+        RECUSADA = 'recusada', 'Recusada'
+        CANCELADA = 'cancelada', 'Cancelada'
+
+    ATIVAS = (Status.PENDENTE, Status.ACEITA)
+
+    carona = models.ForeignKey(
+        Carona,
+        on_delete=models.CASCADE,
+        related_name='reservas',
+    )
+    passageiro = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='reservas',
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=Status.choices,
+        default=Status.PENDENTE,
+    )
+    criada_em = models.DateTimeField(auto_now_add=True)
+    atualizada_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['criada_em']
+        constraints = [
+            # No máximo uma solicitação ou reserva ativa por carona (RN10).
+            models.UniqueConstraint(
+                fields=['carona', 'passageiro'],
+                condition=models.Q(status__in=['pendente', 'aceita']),
+                name='reserva_ativa_unica_por_carona',
+            ),
+        ]
+
+    def __str__(self):
+        return f'{self.passageiro} em {self.carona} ({self.get_status_display()})'
