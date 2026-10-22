@@ -7,71 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Space+Grotesk:wght@600;700&display=swap">
-<style>
-  :root {
-    --primaria: #4c47ed; --primaria-escura: #2d1cb6; --acento: #e8552b; --violeta: #7c3aed;
-    --superficie: #f7f6fb; --tinta: #131228; --linha: rgba(19, 18, 40, 0.07); --avatar: #cbd6f5;
-    --alerta: #ffce3d; --fonte-titulo: 'Space Grotesk', system-ui, sans-serif;
-    --fonte-texto: 'DM Sans', system-ui, sans-serif;
-  }
-  body { background: var(--superficie); color: var(--tinta); font-family: var(--fonte-texto); }
-  body > main { max-width: 480px; padding: 0; }
+<link rel="stylesheet" href="{% static 'contas/css/inicio/style.css'%}">
 
-  .destaque { background: var(--primaria); color: #fff; padding: 24px 22px 30px; border-radius: 0 0 30px 30px; display: flex; flex-direction: column; gap: 18px; }
-  .destaque :focus-visible { outline-color: var(--alerta); }
-  .saudacao { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .saudacao p { margin: 0; font-size: 13px; opacity: 0.7; }
-  .saudacao h1 { margin: 2px 0 0; font: 600 20px var(--fonte-titulo); }
-  .saudacao .perfil { margin-top: 4px; font-size: 12px; }
-  .acoes { display: flex; align-items: center; gap: 8px; flex: none; }
-  .fantasma { display: grid; place-items: center; height: 44px; border-radius: 22px; background: rgba(255, 255, 255, 0.2); color: #fff; }
-  .sino { position: relative; width: 44px; }
-  .sino .ponto { position: absolute; top: 9px; right: 10px; width: 9px; height: 9px; border-radius: 5px; background: var(--alerta); border: 2px solid var(--primaria); }
-  .sair { padding: 0 16px; border: 0; font: 500 13px var(--fonte-texto); }
 
-  .busca { background: #fff; color: var(--tinta); border-radius: 24px; padding: 16px; display: flex; flex-direction: column; }
-  .local { display: flex; align-items: center; gap: 12px; padding: 4px 6px 12px; }
-  .local + .local { padding: 12px 6px 4px; border-top: 1px solid var(--linha); }
-  .local input { flex: 1; min-width: 0; border: 0; padding: 0; font: 500 15px var(--fonte-texto); color: var(--tinta); background: none; }
-  .local input::placeholder { color: var(--tinta); opacity: 0.45; }
-  .marcador-origem { width: 10px; height: 10px; border: 3px solid var(--primaria); border-radius: 5px; flex: none; }
-  .detalhes { display: flex; gap: 10px; padding: 14px 0; }
-  .detalhes label { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; padding: 10px 14px; border-radius: 16px; background: var(--superficie); }
-  .detalhes span { font-size: 11px; opacity: 0.5; }
-  .detalhes input { border: 0; padding: 0; background: none; font: 500 14px var(--fonte-texto); color: var(--tinta); width: 100%; }
-  .erro { margin: 0 0 8px; color: var(--acento); font-size: 13px; }
-
-  .botao { display: flex; align-items: center; justify-content: center; height: 50px; padding: 0 24px; border: 0; border-radius: 25px; background: var(--primaria); color: #fff; font: 700 15px var(--fonte-titulo); text-decoration: none; }
-
-  .principal { padding: 22px 22px 118px; display: flex; flex-direction: column; gap: 14px; }
-  .titulo-lista { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .titulo-lista h2 { margin: 0; font: 600 16px var(--fonte-titulo); }
-  .titulo-lista a { font: 700 12px var(--fonte-titulo); color: var(--primaria); text-decoration: none; }
-  .lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
-  .vazio { margin: 0; opacity: 0.6; font-size: 14px; }
-
-  .card { background: #fff; border-radius: 24px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-  .trajeto { display: flex; gap: 14px; }
-  .linha-tempo { display: flex; flex-direction: column; align-items: center; padding-top: 5px; }
-  .linha-tempo .inicio { width: 9px; height: 9px; border: 2px solid var(--primaria); border-radius: 5px; }
-  .linha-tempo .trilho { flex: 1; min-height: 26px; width: 2px; margin: 3px 0; background: linear-gradient(var(--violeta), var(--acento)); }
-  .linha-tempo .fim { width: 9px; height: 9px; border-radius: 5px; background: var(--acento); }
-  .paradas { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .parada { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-  .parada strong { font: 600 16px var(--fonte-titulo); }
-  .parada time { font-weight: 500; font-size: 14px; }
-  .paradas .apoio { margin: 0; font-size: 12px; opacity: 0.45; }
-  .paradas .chegada { padding-top: 12px; }
-  .motorista { display: flex; align-items: center; gap: 10px; padding-top: 13px; border-top: 1px solid var(--linha); font-size: 13px; }
-  .avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 15px; background: var(--avatar); color: var(--primaria-escura); font: 700 11px var(--fonte-titulo); flex: none; }
-  .motorista .nome { flex: 1; min-width: 0; font-weight: 500; }
-  .motorista .nota { font-weight: 400; color: rgba(26, 17, 40, 0.45); }
-  .vagas { padding: 6px 12px; border-radius: 14px; background: var(--superficie); color: var(--primaria); font: 700 12px var(--fonte-titulo); white-space: nowrap; }
-
-  .barra { position: fixed; left: 16px; right: 16px; bottom: 16px; max-width: 448px; margin: 0 auto; height: 72px; padding: 8px; display: flex; background: #fff; border-radius: 32px; filter: drop-shadow(0 8px 12px rgba(18, 18, 41, 0.1)); }
-  .barra a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 28px; font-weight: 500; font-size: 11px; color: rgba(19, 18, 40, 0.38); text-decoration: none; }
-  .barra a[aria-current] { background: var(--primaria); color: #fff; }
-</style>
 {% endblock %}
 
 {% block topo %}{% endblock %}
