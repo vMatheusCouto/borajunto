@@ -1,9 +1,110 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Início · BoraJunto{% endblock %}
+
+{% block cabeca %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Space+Grotesk:wght@600;700&display=swap">
+<link rel="stylesheet" href="{% static 'contas/css/inicio/style.css'%}">
+
+
+{% endblock %}
+
+{% block topo %}{% endblock %}
 
 {% block conteudo %}
-<h1>Olá, {{ user.first_name|default:user.username }}</h1>
-{% if user.perfil %}
-  <p>{{ user.perfil.curso }}{% if user.perfil.campus %} · campus {{ user.perfil.campus }}{% endif %}</p>
-  <p>Matrícula {{ user.perfil.matricula }}</p>
-{% endif %}
+<section class="destaque">
+  <div class="saudacao">
+    <div>
+      <p>{{ saudacao }},</p>
+      <h1>{{ user.first_name|default:user.username }}</h1>
+      {% if user.perfil %}
+        <p class="perfil">{{ user.perfil.curso }}{% if user.perfil.campus %} · campus {{ user.perfil.campus }}{% endif %}</p>
+        <p class="perfil">Matrícula {{ user.perfil.matricula }}</p>
+      {% endif %}
+    </div>
+    <div class="acoes">
+      <span class="fantasma sino" role="img" aria-label="Notificações{% if notificacoes_nao_lidas %}: há notificações não lidas{% endif %}">
+        <img src="{% static 'contas/img/notificacoes.svg' %}" width="20" height="20" alt="">
+        {% if notificacoes_nao_lidas %}<span class="ponto"></span>{% endif %}
+      </span>
+      <form method="post" action="{% url 'contas:sair' %}">
+        {% csrf_token %}
+        <button type="submit" class="fantasma sair">Sair</button>
+      </form>
+    </div>
+  </div>
+
+  <form method="get" class="busca" role="search" aria-label="Buscar caronas">
+    {% for campo in busca %}{% for erro in campo.errors %}<p class="erro" role="alert">{{ campo.label }}: {{ erro }}</p>{% endfor %}{% endfor %}
+    <label class="local">
+      <span class="marcador-origem" aria-hidden="true"></span>
+      <input type="text" name="origem" value="{{ busca.origem.value|default:'' }}" placeholder="Origem" aria-label="Origem" maxlength="255">
+    </label>
+    <label class="local">
+      <img src="{% static 'contas/img/destino.svg' %}" width="12" height="14" alt="">
+      <input type="text" name="destino" value="{{ busca.destino.value|default:'' }}" placeholder="Destino" aria-label="Destino" maxlength="255">
+    </label>
+    <div class="detalhes">
+      <label><span>{{ busca.data.label }}</span>{{ busca.data }}</label>
+      <label><span>{{ busca.hora.label }}</span>{{ busca.hora }}</label>
+    </div>
+    <button type="submit" class="botao">Buscar caronas</button>
+  </form>
+</section>
+
+<section class="principal" aria-labelledby="titulo-lista">
+  <a class="botao" aria-disabled="true">+ Oferecer carona</a>
+  <div class="titulo-lista">
+    <h2 id="titulo-lista">
+      {% if caronas %}{{ caronas|length }} carona{{ caronas|length|pluralize }} encontrada{{ caronas|length|pluralize }}{% else %}Nenhuma carona encontrada{% endif %}
+    </h2>
+    <a aria-disabled="true">+ Oferecer</a>
+  </div>
+
+  {% if caronas %}
+    <ul class="lista">
+      {% for carona in caronas %}
+        <li class="card">
+          <div class="trajeto">
+            <div class="linha-tempo" aria-hidden="true"><span class="inicio"></span><span class="trilho"></span><span class="fim"></span></div>
+            <div class="paradas">
+              <div class="parada">
+                <strong>{{ carona.origem }}</strong>
+                <time datetime="{{ carona.data_hora|date:'c' }}">{{ carona.data_hora|time:'H:i' }}</time>
+              </div>
+              <p class="apoio">{{ carona.data_hora|date:'l, d \d\e F'|lower|capfirst }}</p>
+              <div class="parada chegada"><strong>{{ carona.destino }}</strong></div>
+              <p class="apoio">encontro em {{ carona.ponto_encontro }}</p>
+            </div>
+          </div>
+          <div class="motorista">
+            <span class="avatar" aria-hidden="true">{{ carona.motorista.first_name|slice:':1'|upper }}{{ carona.motorista.last_name|slice:':1'|upper }}</span>
+            <span class="nome">
+              {{ carona.motorista.get_full_name|default:carona.motorista.username }}
+              <span class="nota">{% if carona.reputacao_quantidade %}★ {{ carona.reputacao_media|floatformat:1 }}{% else %}Sem avaliações{% endif %}</span>
+            </span>
+            <span class="vagas">{{ carona.vagas_restantes }} vaga{{ carona.vagas_restantes|pluralize }}</span>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="vazio">Não há caronas disponíveis com esses filtros. Tente outra data ou outro trajeto.</p>
+  {% endif %}
+</section>
+
+<nav class="barra" aria-label="Navegação principal">
+  <a href="{% url 'contas:inicio' %}" aria-current="page">
+    <img src="{% static 'contas/img/inicio.svg' %}" width="24" height="24" alt="">Início
+  </a>
+  <a aria-disabled="true">
+    <img src="{% static 'contas/img/viagens.svg' %}" width="24" height="24" alt="">Viagens
+  </a>
+  <a aria-disabled="true">
+    <img src="{% static 'contas/img/perfil.svg' %}" width="24" height="24" alt="">Perfil
+  </a>
+</nav>
 {% endblock %}
