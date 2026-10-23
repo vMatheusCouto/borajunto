@@ -83,7 +83,7 @@
           <div class="motorista">
             <span class="avatar" aria-hidden="true">{{ carona.motorista.first_name|slice:':1'|upper }}{{ carona.motorista.last_name|slice:':1'|upper }}</span>
             <span class="nome">
-              {{ carona.motorista.get_full_name|default:carona.motorista.username }}
+              {{ carona.motorista.get_full_name  |default:carona.motorista.username }}
               <span class="nota">{% if carona.reputacao_quantidade %}★ {{ carona.reputacao_media|floatformat:1 }}{% else %}Sem avaliações{% endif %}</span>
             </span>
             <span class="vagas">{{ carona.vagas_restantes }} vaga{{ carona.vagas_restantes|pluralize }}</span>

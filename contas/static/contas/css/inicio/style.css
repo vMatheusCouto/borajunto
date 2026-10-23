@@ -55,8 +55,8 @@
   .paradas .chegada { padding-top: 12px; }
   .motorista { display: flex; align-items: center; gap: 10px; padding-top: 13px; border-top: 1px solid var(--linha); font-size: 13px; }
   .avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 15px; background: var(--avatar); color: var(--primaria-escura); font: 700 11px var(--fonte-titulo); flex: none; }
-  .motorista .nome { flex: 1; min-width: 0; font-weight: 500; }
-  .motorista .nota { font-weight: 400; color: rgba(26, 17, 40, 0.45); }
+  .motorista .nome { flex: 1; min-width: 0; font-weight: 500; margin-right: 10px; }
+  .motorista .nota { margin-left: 5px; font-weight: 400; color: rgba(26, 17, 40, 0.45); }
   .vagas { padding: 6px 12px; border-radius: 14px; background: var(--superficie); color: var(--primaria); font: 700 12px var(--fonte-titulo); white-space: nowrap; }
 
   .barra { position: fixed; left: 16px; right: 16px; bottom: 16px; max-width: 448px; margin: 0 auto; height: 72px; padding: 8px; display: flex; background: #fff; border-radius: 32px; filter: drop-shadow(0 8px 12px rgba(18, 18, 41, 0.1)); }
