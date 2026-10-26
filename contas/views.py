@@ -3,8 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils import timezone
 
+from avaliacoes.models import Avaliacao
 from caronas.forms import BuscaForm
-from caronas.models import Carona
+from caronas.models import Carona, Reserva
 
 from .forms import EntrarForm
 
@@ -36,6 +37,20 @@ def inicio(request):
     return render(request, 'contas/inicio.html', {
         'saudacao': saudacao(timezone.localtime()),
         'busca': busca,
+        'filtrada': any(request.GET.get(campo) for campo in busca.fields),
         'caronas': caronas,
         'notificacoes_nao_lidas': request.user.notificacoes.filter(lida=False).exists(),
+    })
+
+
+@login_required
+def perfil(request):
+    usuario = request.user
+    concluida = Carona.Status.CONCLUIDA
+    caronas = (usuario.caronas.filter(status=concluida).count()
+               + usuario.reservas.filter(status=Reserva.Status.ACEITA, carona__status=concluida).count())
+    return render(request, 'contas/perfil.html', {
+        'perfil': getattr(usuario, 'perfil', None),
+        'caronas': caronas,
+        'reputacao': Avaliacao.objects.reputacao(usuario),
     })
