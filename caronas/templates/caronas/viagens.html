@@ -26,16 +26,15 @@
             <strong>{{ carona.origem }} → {{ carona.destino }}</strong>
             <time datetime="{{ carona.data_hora|date:'c' }}">{{ carona.data_hora|time:'H:i' }}</time>
           </div>
-          <p class="info">{{ carona.data_hora|date:'l, d \d\e F'|lower|capfirst }} · {{ carona.vagas_restantes }} de {{ carona.vagas }} vaga{{ carona.vagas|pluralize }} livre{{ carona.vagas_restantes|pluralize }}</p>
+          <p class="info">{{ carona.data_hora|date:'l, d \d\e F'|lower|capfirst }} · {{ carona.livres|length }} de {{ carona.vagas }} vagas livres</p>
           {% if carona.status != 'publicada' %}<span class="situacao">{{ carona.get_status_display }}</span>{% endif %}
           <div class="rodape">
             <ul class="assentos" aria-label="Vagas">
-              {% for reserva in carona.assentos %}
-                {% if reserva %}
-                  <li class="ocupado" title="{{ reserva.passageiro.get_full_name|default:reserva.passageiro.username }}">{{ reserva.passageiro.first_name|slice:':1'|upper }}{{ reserva.passageiro.last_name|slice:':1'|upper }}</li>
-                {% else %}
-                  <li aria-label="Vaga livre"><img src="{% static 'contas/img/vaga.svg' %}" width="16" height="16" alt=""></li>
-                {% endif %}
+              {% for reserva in carona.confirmadas %}
+                <li class="ocupado">{{ reserva.passageiro.first_name|slice:':1'|upper }}{{ reserva.passageiro.last_name|slice:':1'|upper }}</li>
+              {% endfor %}
+              {% for vaga in carona.livres %}
+                <li><img src="{% static 'contas/img/vaga.svg' %}" width="16" height="16" alt="Vaga livre"></li>
               {% endfor %}
             </ul>
             <a class="editar" aria-disabled="true">Editar</a>

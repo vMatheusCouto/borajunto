@@ -26,10 +26,9 @@
     <div class="campo vagas{% if form.vagas.errors %} invalido{% endif %}">
       <h2><label for="{{ form.vagas.id_for_label }}">{{ form.vagas.label }}</label></h2>
       <div class="contador">
-        <button type="button" class="menos" aria-label="Uma vaga a menos" hidden>−</button>
-        <input type="number" name="vagas" id="{{ form.vagas.id_for_label }}" inputmode="numeric"
-               min="1" max="{{ form.fields.vagas.max_value }}" value="{{ form.vagas.value|default:3 }}" required>
-        <button type="button" class="mais" aria-label="Uma vaga a mais" hidden>+</button>
+        <button type="button" class="menos" aria-label="Uma vaga a menos">−</button>
+        {{ form.vagas }}
+        <button type="button" class="mais" aria-label="Uma vaga a mais">+</button>
       </div>
     </div>
     {% for erro in form.vagas.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
@@ -49,31 +48,18 @@
 </form>
 
 <script>
-  (function () {
-    const campo = document.getElementById('{{ form.vagas.id_for_label }}');
-    const menos = document.querySelector('.contador .menos');
-    const mais = document.querySelector('.contador .mais');
-    const min = Number(campo.min), max = Number(campo.max);
+  const vagas = document.getElementById('id_vagas');
 
-    const atualizar = () => {
-      const valor = Number(campo.value);
-      menos.disabled = valor <= min;
-      mais.disabled = valor >= max;
-    };
-    const somar = (passo) => {
-      const valor = Math.min(max, Math.max(min, (Number(campo.value) || min) + passo));
-      campo.value = valor;
-      campo.classList.remove('pulsar');
-      void campo.offsetWidth;
-      campo.classList.add('pulsar');
-      atualizar();
-    };
+  document.querySelector('.menos').addEventListener('click', function () {
+    if (Number(vagas.value) > 1) {
+      vagas.value = Number(vagas.value) - 1;
+    }
+  });
 
-    menos.hidden = mais.hidden = false;
-    menos.addEventListener('click', () => somar(-1));
-    mais.addEventListener('click', () => somar(1));
-    campo.addEventListener('input', atualizar);
-    atualizar();
-  })();
+  document.querySelector('.mais').addEventListener('click', function () {
+    if (Number(vagas.value) < 6) {
+      vagas.value = Number(vagas.value) + 1;
+    }
+  });
 </script>
 {% endblock %}

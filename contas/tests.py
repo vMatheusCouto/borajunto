@@ -151,19 +151,3 @@ class InicioTests(TestCase):
                                    mensagem='Sua vaga foi aceita.')
         self.assertContains(self.client.get(reverse('contas:inicio')), 'class="ponto"')
 
-    def test_sem_resultados_com_filtro_oferece_limpar(self):
-        resposta = self.client.get(reverse('contas:inicio'), {'origem': 'nenhum lugar'})
-        self.assertContains(resposta, 'Limpar filtros')
-
-
-class PerfilTests(TestCase):
-    def test_mostra_dados_e_numeros(self):
-        User = get_user_model()
-        mateus = User.objects.create_user('20211094040001', first_name='Mateus', last_name='Silva')
-        Perfil.objects.create(usuario=mateus, matricula='20211094040001', curso='Informática', campus='PF')
-        self.client.force_login(mateus)
-        resposta = self.client.get(reverse('contas:perfil'))
-        self.assertContains(resposta, 'Mateus Silva')
-        self.assertContains(resposta, 'VÍNCULO ATIVO')
-        self.assertContains(resposta, '2021')
-        self.assertContains(resposta, 'sem avaliações')

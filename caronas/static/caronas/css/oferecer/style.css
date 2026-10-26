@@ -31,16 +31,9 @@
   .contador button { display: grid; place-items: center; width: 46px; height: 46px; flex: none; border: 0; border-radius: 23px; background: var(--superficie); color: var(--primaria); font: 600 24px/24px var(--fonte-titulo); transition: transform 0.15s, opacity 0.2s; }
   .contador button.mais { background: var(--primaria); color: #fff; }
   .contador button:active { transform: scale(0.92); }
-  .contador button:disabled { opacity: 0.35; cursor: default; transform: none; }
   .contador input { flex: 1; text-align: center; font: 700 34px var(--fonte-titulo); -moz-appearance: textfield; appearance: textfield; }
   .contador input::-webkit-inner-spin-button, .contador input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-  .contador .pulsar { animation: pulsar 0.25s ease; }
-  @keyframes pulsar { 50% { transform: scale(1.15); } }
 
   .confirmar { position: fixed; left: 0; right: 0; bottom: 0; max-width: 480px; margin: 0 auto; padding: 16px 22px 26px; background: linear-gradient(rgba(247, 246, 251, 0), var(--superficie) 32%); }
   .confirmar .botao { width: 100%; height: 56px; border-radius: 28px; font-size: 16px; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .contador .pulsar { animation: none; }
-  }
 

@@ -37,7 +37,7 @@ def inicio(request):
     return render(request, 'contas/inicio.html', {
         'saudacao': saudacao(timezone.localtime()),
         'busca': busca,
-        'filtrada': any(request.GET.get(campo) for campo in busca.fields),
+        'filtrada': any(request.GET.values()),
         'caronas': caronas,
         'notificacoes_nao_lidas': request.user.notificacoes.filter(lida=False).exists(),
     })
@@ -45,12 +45,10 @@ def inicio(request):
 
 @login_required
 def perfil(request):
-    usuario = request.user
-    concluida = Carona.Status.CONCLUIDA
-    caronas = (usuario.caronas.filter(status=concluida).count()
-               + usuario.reservas.filter(status=Reserva.Status.ACEITA, carona__status=concluida).count())
+    como_motorista = Carona.objects.filter(motorista=request.user, status='concluida').count()
+    como_passageiro = Reserva.objects.filter(
+        passageiro=request.user, status='aceita', carona__status='concluida').count()
     return render(request, 'contas/perfil.html', {
-        'perfil': getattr(usuario, 'perfil', None),
-        'caronas': caronas,
-        'reputacao': Avaliacao.objects.reputacao(usuario),
+        'caronas': como_motorista + como_passageiro,
+        'reputacao': Avaliacao.objects.reputacao(request.user),
     })

@@ -1,100 +1,126 @@
+from datetime import datetime
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
-from django.db.models import Prefetch
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_POST
+from django.utils import timezone
 
 from notificacoes.models import Notificacao
 
 from .forms import TrajetoForm, VagasForm
 from .models import Carona, Reserva
 
-CHAVE_RASCUNHO = 'carona_rascunho'
-ATIVAS = (Carona.Status.PUBLICADA, Carona.Status.LOTADA, Carona.Status.EM_ANDAMENTO)
-
 
 @login_required
 def oferecer(request):
-    form = TrajetoForm(request.POST or None, initial=request.session.get(CHAVE_RASCUNHO))
-    if form.is_valid():
-        request.session[CHAVE_RASCUNHO] = form.para_sessao()
-        return redirect('caronas:oferecer_vagas')
+    if request.method == 'POST':
+        form = TrajetoForm(request.POST)
+        if form.is_valid():
+            dados = form.cleaned_data
+            request.session['nova_carona'] = {
+                'origem': dados['origem'],
+                'destino': dados['destino'],
+                'ponto_encontro': dados['ponto_encontro'],
+                'data': dados['data'].strftime('%Y-%m-%d'),
+                'horario': dados['horario'].strftime('%H:%M'),
+            }
+            return redirect('caronas:oferecer_vagas')
+    else:
+        form = TrajetoForm(initial=request.session.get('nova_carona'))
     return render(request, 'caronas/oferecer_trajeto.html', {'form': form})
 
 
 @login_required
 def oferecer_vagas(request):
-    rascunho = request.session.get(CHAVE_RASCUNHO)
-    if not rascunho:
+    trajeto = request.session.get('nova_carona')
+    if trajeto is None:
         return redirect('caronas:oferecer')
-    form = VagasForm(request.POST or None)
-    if form.is_valid():
-        trajeto = TrajetoForm(rascunho)
-        if not trajeto.is_valid():
-            messages.error(request, 'O horário escolhido já passou. Confira o trajeto de novo.')
-            return redirect('caronas:oferecer')
-        dados = trajeto.cleaned_data
-        Carona.objects.create(
-            motorista=request.user,
-            origem=dados['origem'],
-            destino=dados['destino'],
-            ponto_encontro=dados['ponto_encontro'],
-            data_hora=dados['data_hora'],
-            vagas=form.cleaned_data['vagas'],
-            observacoes=form.cleaned_data['observacoes'],
-        )
-        del request.session[CHAVE_RASCUNHO]
-        messages.success(request, 'Carona publicada. Você recebe uma notificação a cada solicitação.')
-        return redirect('caronas:viagens')
-    return render(request, 'caronas/oferecer_vagas.html', {'form': form, 'rascunho': rascunho})
+
+    if request.method == 'POST':
+        form = VagasForm(request.POST)
+        if form.is_valid():
+            data_hora = datetime.strptime(trajeto['data'] + ' ' + trajeto['horario'], '%Y-%m-%d %H:%M')
+            Carona.objects.create(
+                motorista=request.user,
+                origem=trajeto['origem'],
+                destino=trajeto['destino'],
+                ponto_encontro=trajeto['ponto_encontro'],
+                data_hora=timezone.make_aware(data_hora),
+                vagas=form.cleaned_data['vagas'],
+                observacoes=form.cleaned_data['observacoes'],
+            )
+            del request.session['nova_carona']
+            messages.success(request, 'Carona publicada. Você recebe uma notificação a cada solicitação.')
+            return redirect('caronas:viagens')
+    else:
+        form = VagasForm()
+    return render(request, 'caronas/oferecer_vagas.html', {'form': form})
 
 
 @login_required
 def viagens(request):
-    aba = 'solicitei' if request.GET.get('aba') == 'solicitei' else 'ofereci'
-    contexto = {'aba': aba}
-    if aba == 'ofereci':
-        reservas = Reserva.objects.select_related('passageiro__perfil').order_by('criada_em')
-        caronas = (request.user.caronas.filter(status__in=ATIVAS)
-                   .com_vagas_restantes()
-                   .prefetch_related(
-                       Prefetch('reservas', queryset=reservas.filter(status=Reserva.Status.PENDENTE),
-                                to_attr='pendentes'),
-                       Prefetch('reservas', queryset=reservas.filter(status=Reserva.Status.ACEITA),
-                                to_attr='confirmadas')))
-        for carona in caronas:
-            carona.assentos = carona.confirmadas + [None] * carona.vagas_restantes
-        contexto['caronas'] = caronas
-    else:
-        contexto['reservas'] = (request.user.reservas
-                                .select_related('carona__motorista')
-                                .order_by('-carona__data_hora'))
-    return render(request, 'caronas/viagens.html', contexto)
+    if request.GET.get('aba') == 'solicitei':
+        reservas = Reserva.objects.filter(passageiro=request.user).order_by('-criada_em')
+        return render(request, 'caronas/viagens.html', {'aba': 'solicitei', 'reservas': reservas})
+
+    caronas = list(Carona.objects.filter(
+        motorista=request.user,
+        status__in=['publicada', 'lotada', 'em_andamento'],
+    ))
+    for carona in caronas:
+        carona.confirmadas = carona.reservas.filter(status='aceita')
+        carona.pendentes = carona.reservas.filter(status='pendente')
+        carona.livres = range(carona.vagas - carona.confirmadas.count())
+    return render(request, 'caronas/viagens.html', {'aba': 'ofereci', 'caronas': caronas})
 
 
 @login_required
-@require_POST
-def decidir(request, pk, decisao):
-    reserva = get_object_or_404(Reserva.objects.select_related('carona', 'passageiro'),
-                                pk=pk, carona__motorista=request.user)
-    nome = reserva.passageiro.get_full_name() or reserva.passageiro.username
-    try:
-        if decisao == 'aceitar':
-            reserva.aceitar()
-        else:
-            reserva.recusar()
-    except ValidationError as erro:
-        messages.error(request, erro.messages[0])
+def aceitar(request, pk):
+    reserva = get_object_or_404(Reserva, pk=pk, carona__motorista=request.user)
+    carona = reserva.carona
+    if request.method != 'POST':
         return redirect('caronas:viagens')
 
-    aceita = decisao == 'aceitar'
-    Notificacao.objects.create(
-        destinatario=reserva.passageiro,
-        carona=reserva.carona,
-        tipo=Notificacao.Tipo.DECISAO,
-        mensagem=(f'Sua vaga em {reserva.carona.origem} → {reserva.carona.destino} foi '
-                  f'{"confirmada" if aceita else "recusada"}.'),
-    )
-    messages.success(request, f'Vaga de {nome} confirmada.' if aceita else f'Solicitação de {nome} recusada.')
+    with transaction.atomic():
+        confirmadas = carona.reservas.filter(status='aceita').count()
+        if reserva.status != 'pendente':
+            messages.error(request, 'Essa solicitação já foi respondida.')
+        elif confirmadas >= carona.vagas:
+            messages.error(request, 'Todas as vagas dessa carona já estão ocupadas.')
+        else:
+            reserva.status = 'aceita'
+            reserva.save()
+            if confirmadas + 1 == carona.vagas:
+                carona.status = 'lotada'
+                carona.save()
+            Notificacao.objects.create(
+                destinatario=reserva.passageiro,
+                carona=carona,
+                tipo='decisao',
+                mensagem=f'Sua vaga em {carona.origem} → {carona.destino} foi confirmada.',
+            )
+            messages.success(request, 'Vaga confirmada.')
+    return redirect('caronas:viagens')
+
+
+@login_required
+def recusar(request, pk):
+    reserva = get_object_or_404(Reserva, pk=pk, carona__motorista=request.user)
+    carona = reserva.carona
+    if request.method != 'POST':
+        return redirect('caronas:viagens')
+
+    if reserva.status != 'pendente':
+        messages.error(request, 'Essa solicitação já foi respondida.')
+    else:
+        reserva.status = 'recusada'
+        reserva.save()
+        Notificacao.objects.create(
+            destinatario=reserva.passageiro,
+            carona=carona,
+            tipo='decisao',
+            mensagem=f'Sua vaga em {carona.origem} → {carona.destino} foi recusada.',
+        )
+        messages.success(request, 'Solicitação recusada.')
     return redirect('caronas:viagens')
