@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Minhas viagens · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'caronas/css/viagens/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<div class="tela">
+  <h1>Minhas viagens</h1>
+  <nav class="abas" aria-label="Tipo de viagem">
+    <a href="{% url 'caronas:viagens' %}"{% if aba == 'ofereci' %} aria-current="page"{% endif %}>Ofereci</a>
+    <a href="{% url 'caronas:viagens' %}?aba=solicitei"{% if aba == 'solicitei' %} aria-current="page"{% endif %}>Solicitei</a>
+  </nav>
+
+  {% if aba == 'ofereci' %}
+    {% for carona in caronas %}
+      <section class="bloco" aria-label="Carona {{ carona.origem }} para {{ carona.destino }}">
+        <div class="oferecida">
+          <div class="rota">
+            <strong>{{ carona.origem }} → {{ carona.destino }}</strong>
+            <time datetime="{{ carona.data_hora|date:'c' }}">{{ carona.data_hora|time:'H:i' }}</time>
+          </div>
+          <p class="info">{{ carona.data_hora|date:'l, d \d\e F'|lower|capfirst }} · {{ carona.vagas_restantes }} de {{ carona.vagas }} vaga{{ carona.vagas|pluralize }} livre{{ carona.vagas_restantes|pluralize }}</p>
+          {% if carona.status != 'publicada' %}<span class="situacao">{{ carona.get_status_display }}</span>{% endif %}
+          <div class="rodape">
+            <ul class="assentos" aria-label="Vagas">
+              {% for reserva in carona.assentos %}
+                {% if reserva %}
+                  <li class="ocupado" title="{{ reserva.passageiro.get_full_name|default:reserva.passageiro.username }}">{{ reserva.passageiro.first_name|slice:':1'|upper }}{{ reserva.passageiro.last_name|slice:':1'|upper }}</li>
+                {% else %}
+                  <li aria-label="Vaga livre"><img src="{% static 'contas/img/vaga.svg' %}" width="16" height="16" alt=""></li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+            <a class="editar" aria-disabled="true">Editar</a>
+          </div>
+        </div>
+
+        <h2>Solicitações pendentes</h2>
+        {% if carona.pendentes %}
+          <ul class="lista">
+            {% for reserva in carona.pendentes %}
+              {% with passageiro=reserva.passageiro %}
+                <li class="solicitacao">
+                  <div class="usuario">
+                    <span class="avatar" aria-hidden="true">{{ passageiro.first_name|slice:':1'|upper }}{{ passageiro.last_name|slice:':1'|upper }}</span>
+                    <div>
+                      <strong>{{ passageiro.get_full_name|default:passageiro.username }}</strong>
+                      {% if passageiro.perfil %}<span>{{ passageiro.perfil.curso|default:'Estudante' }}{% if passageiro.perfil.campus %} · {{ passageiro.perfil.campus }}{% endif %}</span>{% endif %}
+                    </div>
+                  </div>
+                  <div class="opcoes">
+                    <form method="post" action="{% url 'caronas:recusar' reserva.pk %}">
+                      {% csrf_token %}
+                      <button type="submit" class="botao contorno"><span>Recusar</span></button>
+                    </form>
+                    <form method="post" action="{% url 'caronas:aceitar' reserva.pk %}">
+                      {% csrf_token %}
+                      <button type="submit" class="botao">Aceitar</button>
+                    </form>
+                  </div>
+                </li>
+              {% endwith %}
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="sem-pendentes">Nenhuma solicitação pendente. Você recebe uma notificação quando alguém pedir uma vaga.</p>
+        {% endif %}
+      </section>
+    {% empty %}
+      <div class="vazio">
+        <h2>Você não tem caronas ativas</h2>
+        <p>Ofereça uma carona e as solicitações dos passageiros aparecem aqui.</p>
+        <a class="botao" href="{% url 'caronas:oferecer' %}">+ Oferecer carona</a>
+      </div>
+    {% endfor %}
+
+  {% else %}
+    {% if reservas %}
+      <ul class="lista">
+        {% for reserva in reservas %}
+          {% with carona=reserva.carona %}
+            <li class="solicitada">
+              <div class="topo">
+                <strong>{{ carona.origem }} → {{ carona.destino }}</strong>
+                <span class="selo {{ reserva.status }}">{% if reserva.status == 'aceita' %}Confirmada{% else %}{{ reserva.get_status_display }}{% endif %}</span>
+              </div>
+              <p>{{ carona.data_hora|date:'D, d M · H:i'|lower|capfirst }} · {{ carona.motorista.get_full_name|default:carona.motorista.username }}</p>
+            </li>
+          {% endwith %}
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="vazio">
+        <h2>Nenhuma vaga solicitada</h2>
+        <p>Quando você pedir uma vaga em uma carona, ela aparece aqui com a situação do pedido.</p>
+        <a class="botao" href="{% url 'contas:inicio' %}">Buscar caronas</a>
+      </div>
+    {% endif %}
+  {% endif %}
+</div>
+
+{% include 'barra.html' with ativa='viagens' %}
+{% endblock %}

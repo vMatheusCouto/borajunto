@@ -1,0 +1,46 @@
+
+  .tela { display: flex; flex-direction: column; gap: 22px; padding: 18px 22px 120px; }
+
+  .cabecalho { display: flex; flex-direction: column; gap: 3px; }
+  .voltar { display: grid; place-items: center; width: 40px; height: 40px; margin-left: -8px; border-radius: 20px; transition: background-color 0.2s; }
+  .voltar:hover { background: var(--linha); }
+  .cabecalho h1 { margin: 13px 0 0; font: 700 26px var(--fonte-titulo); letter-spacing: -0.5px; }
+  .cabecalho p { margin: 0; font-size: 13.5px; line-height: 20.25px; opacity: 0.55; }
+  .progresso { display: flex; gap: 6px; padding-top: 17px; }
+  .progresso span { flex: 1; height: 4px; border-radius: 2px; background: var(--avatar); }
+  .progresso .feito { background: var(--primaria); }
+
+  .formulario { display: flex; flex-direction: column; gap: 12px; }
+  .linha-dupla { display: flex; gap: 12px; }
+  .linha-dupla > * { flex: 1; min-width: 0; }
+  .campo { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; border-radius: 22px; background: #fff; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06); transition: box-shadow 0.2s; }
+  .campo:focus-within { box-shadow: 0 0 0 3px var(--primaria); }
+  .campo label, .campo .rotulo { font-size: 11.5px; opacity: 0.5; }
+  .campo input, .campo textarea { width: 100%; min-width: 0; border: 0; padding: 0; background: none; font: 500 16px var(--fonte-texto); color: var(--tinta); }
+  .campo textarea { font-weight: 400; font-size: 15px; line-height: 22.5px; resize: vertical; }
+  .campo input:focus, .campo textarea:focus { outline: none; }
+  .campo input::placeholder, .campo textarea::placeholder { color: var(--tinta); opacity: 0.3; }
+  .campo.invalido { box-shadow: 0 0 0 2px var(--acento); }
+  .erro { margin: 0; padding: 0 6px; color: var(--acento); font-size: 13px; }
+  .nota { margin: 0; font-size: 12.5px; line-height: 18.75px; opacity: 0.6; }
+
+  .vagas { gap: 14px; padding: 18px; }
+  .vagas h2 { margin: 0; font: 600 14px var(--fonte-titulo); }
+  .vagas h2 label { font: inherit; opacity: 1; }
+  .contador { display: flex; align-items: center; gap: 18px; }
+  .contador button { display: grid; place-items: center; width: 46px; height: 46px; flex: none; border: 0; border-radius: 23px; background: var(--superficie); color: var(--primaria); font: 600 24px/24px var(--fonte-titulo); transition: transform 0.15s, opacity 0.2s; }
+  .contador button.mais { background: var(--primaria); color: #fff; }
+  .contador button:active { transform: scale(0.92); }
+  .contador button:disabled { opacity: 0.35; cursor: default; transform: none; }
+  .contador input { flex: 1; text-align: center; font: 700 34px var(--fonte-titulo); -moz-appearance: textfield; appearance: textfield; }
+  .contador input::-webkit-inner-spin-button, .contador input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .contador .pulsar { animation: pulsar 0.25s ease; }
+  @keyframes pulsar { 50% { transform: scale(1.15); } }
+
+  .confirmar { position: fixed; left: 0; right: 0; bottom: 0; max-width: 480px; margin: 0 auto; padding: 16px 22px 26px; background: linear-gradient(rgba(247, 246, 251, 0), var(--superficie) 32%); }
+  .confirmar .botao { width: 100%; height: 56px; border-radius: 28px; font-size: 16px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contador .pulsar { animation: none; }
+  }
+

@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.db import models
+from django.core.exceptions import ValidationError
+from django.db import models, transaction
 from django.db.models import Avg, Count, F, OuterRef, Q, Subquery
 from django.utils import timezone
 
@@ -105,3 +106,31 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f'{self.passageiro} em {self.carona} ({self.get_status_display()})'
+
+    def aceitar(self):
+        with transaction.atomic():
+            carona = Carona.objects.select_for_update().get(pk=self.carona_id)
+            self.refresh_from_db(fields=['status'])
+            self._exigir_pendente()
+            if carona.status != Carona.Status.PUBLICADA or carona.data_hora <= timezone.now():
+                raise ValidationError('Essa carona não aceita mais passageiros.')
+            confirmadas = carona.reservas.filter(status=self.Status.ACEITA).count()
+            if confirmadas >= carona.vagas:
+                raise ValidationError('Todas as vagas dessa carona já estão ocupadas.')
+            self.status = self.Status.ACEITA
+            self.save(update_fields=['status', 'atualizada_em'])
+            if confirmadas + 1 == carona.vagas:
+                carona.status = Carona.Status.LOTADA
+                carona.save(update_fields=['status'])
+        self.carona = carona
+
+    def recusar(self):
+        with transaction.atomic():
+            self.refresh_from_db(fields=['status'])
+            self._exigir_pendente()
+            self.status = self.Status.RECUSADA
+            self.save(update_fields=['status', 'atualizada_em'])
+
+    def _exigir_pendente(self):
+        if self.status != self.Status.PENDENTE:
+            raise ValidationError('Essa solicitação já foi respondida.')
