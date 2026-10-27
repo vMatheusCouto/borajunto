@@ -150,3 +150,4 @@ class InicioTests(TestCase):
         Notificacao.objects.create(destinatario=self.ana, tipo=Notificacao.Tipo.DECISAO,
                                    mensagem='Sua vaga foi aceita.')
         self.assertContains(self.client.get(reverse('contas:inicio')), 'class="ponto"')
+

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Oferecer carona · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'caronas/css/oferecer/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<form method="post" class="tela" novalidate>
+  {% csrf_token %}
+  <div class="cabecalho">
+    <a class="voltar" href="{% url 'caronas:oferecer' %}" aria-label="Voltar ao passo 1">
+      <img src="{% static 'contas/img/voltar.svg' %}" width="18" height="18" alt="">
+    </a>
+    <h1>Oferecer carona</h1>
+    <p>Passo 2 de 2 · vagas e observações</p>
+    <div class="progresso" aria-hidden="true"><span class="feito"></span><span class="feito"></span></div>
+  </div>
+
+  <div class="formulario">
+    <div class="campo vagas{% if form.vagas.errors %} invalido{% endif %}">
+      <h2><label for="{{ form.vagas.id_for_label }}">{{ form.vagas.label }}</label></h2>
+      <div class="contador">
+        <button type="button" class="menos" aria-label="Uma vaga a menos">−</button>
+        {{ form.vagas }}
+        <button type="button" class="mais" aria-label="Uma vaga a mais">+</button>
+      </div>
+    </div>
+    {% for erro in form.vagas.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
+
+    <div class="campo{% if form.observacoes.errors %} invalido{% endif %}">
+      <label for="{{ form.observacoes.id_for_label }}">{{ form.observacoes.label }}</label>
+      {{ form.observacoes }}
+    </div>
+    {% for erro in form.observacoes.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
+
+    <p class="nota">Você confirma cada solicitação manualmente. A vaga só é reservada depois da sua confirmação.</p>
+  </div>
+
+  <div class="confirmar">
+    <button type="submit" class="botao">Publicar carona</button>
+  </div>
+</form>
+
+<script>
+  const vagas = document.getElementById('id_vagas');
+
+  document.querySelector('.menos').addEventListener('click', function () {
+    if (Number(vagas.value) > 1) {
+      vagas.value = Number(vagas.value) - 1;
+    }
+  });
+
+  document.querySelector('.mais').addEventListener('click', function () {
+    if (Number(vagas.value) < 6) {
+      vagas.value = Number(vagas.value) + 1;
+    }
+  });
+</script>
+{% endblock %}

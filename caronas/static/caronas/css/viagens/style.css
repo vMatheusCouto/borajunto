@@ -1,0 +1,50 @@
+
+  .tela { display: flex; flex-direction: column; gap: 20px; padding: 26px 22px 118px; }
+  .tela h1 { margin: 0; font: 700 26px var(--fonte-titulo); letter-spacing: -0.5px; }
+
+  .abas { display: flex; gap: 6px; padding: 4px; margin-top: -4px; border-radius: 20px; background: var(--linha); }
+  .abas a { flex: 1; display: grid; place-items: center; height: 38px; border-radius: 16px; font: 600 13.5px var(--fonte-titulo); color: rgba(19, 18, 40, 0.45); text-decoration: none; transition: background-color 0.2s, color 0.2s; }
+  .abas a[aria-current] { background: #fff; color: var(--tinta); box-shadow: 0 2px 6px rgba(19, 18, 40, 0.06); }
+
+  .bloco { display: flex; flex-direction: column; gap: 14px; }
+  .bloco + .bloco { padding-top: 6px; }
+  .bloco h2 { margin: 0; font: 600 14px var(--fonte-titulo); }
+
+  .oferecida { display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 26px; background: var(--tinta); color: #fff; }
+  .oferecida .rota { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .oferecida .rota strong { font: 600 17px var(--fonte-titulo); }
+  .oferecida .rota time { font-weight: 500; font-size: 15px; flex: none; }
+  .oferecida .info { margin: 0; font-size: 12.5px; opacity: 0.55; }
+  .oferecida .rodape { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; padding-top: 16px; }
+  .assentos { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .assentos li { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 17px; background: var(--primaria-clara); font: 700 11px var(--fonte-titulo); }
+  .assentos li.ocupado { background: #fff; color: var(--primaria-escura); }
+  .editar { display: grid; place-items: center; height: 34px; padding: 0 28px; border-radius: 22px; background: var(--primaria-clara); color: #fff; font: 700 11px var(--fonte-titulo); text-decoration: none; }
+  .editar[aria-disabled="true"] { opacity: 0.6; }
+  .situacao { align-self: flex-start; padding: 3px 9px; border-radius: 10px; background: rgba(255, 255, 255, 0.14); font: 600 10px var(--fonte-titulo); letter-spacing: 0.3px; text-transform: uppercase; }
+
+  .lista { display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; list-style: none; }
+  .solicitacao { display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 24px; background: #fff; }
+  .usuario { display: flex; align-items: center; gap: 12px; }
+  .usuario .avatar { width: 46px; height: 46px; border-radius: 23px; font-size: 15px; }
+  .usuario strong { display: block; font: 600 15px var(--fonte-titulo); }
+  .usuario div span { display: block; font-size: 12px; line-height: 16.2px; opacity: 0.5; }
+  .opcoes { display: flex; gap: 10px; }
+  .opcoes form { flex: 1; }
+  .opcoes .botao { width: 100%; height: 44px; border-radius: 22px; font-size: 13.5px; }
+  .sem-pendentes { margin: 0; padding: 18px; border-radius: 24px; background: #fff; font-size: 13.5px; opacity: 0.6; }
+
+  .solicitada { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; border-radius: 24px; background: #fff; }
+  .solicitada .topo { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .solicitada strong { font: 600 15px var(--fonte-titulo); }
+  .solicitada p { margin: 0; font-size: 12.5px; opacity: 0.55; }
+  .selo { flex: none; padding: 4px 10px; border-radius: 10px; font: 700 10px var(--fonte-titulo); letter-spacing: 0.3px; text-transform: uppercase; background: var(--linha); color: rgba(19, 18, 40, 0.6); }
+  .selo.pendente { background: rgba(255, 206, 61, 0.25); color: #8a6500; }
+  .selo.aceita { background: rgba(76, 71, 237, 0.12); color: var(--primaria); }
+  .selo.recusada { background: rgba(232, 85, 43, 0.12); color: var(--acento); }
+
+  .vazio { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 32px 24px 26px; border-radius: 24px; background: #fff; text-align: center; }
+  .vazio h2 { margin: 0; font: 600 17px var(--fonte-titulo); }
+  .vazio p { margin: 0; max-width: 280px; font-size: 13.5px; line-height: 20px; opacity: 0.6; }
+  .vazio .botao { height: 44px; margin-top: 10px; font-size: 13.5px; }
+

@@ -105,3 +105,4 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f'{self.passageiro} em {self.carona} ({self.get_status_display()})'
+

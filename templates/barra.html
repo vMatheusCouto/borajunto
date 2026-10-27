@@ -1,0 +1,12 @@
+{% load static %}
+<nav class="barra" aria-label="Navegação principal">
+  <a href="{% url 'contas:inicio' %}"{% if ativa == 'inicio' %} aria-current="page"{% endif %}>
+    <img src="{% if ativa == 'inicio' %}{% static 'contas/img/inicio.svg' %}{% else %}{% static 'contas/img/inicio-inativo.svg' %}{% endif %}" width="24" height="24" alt="">Início
+  </a>
+  <a href="{% url 'caronas:viagens' %}"{% if ativa == 'viagens' %} aria-current="page"{% endif %}>
+    <img src="{% if ativa == 'viagens' %}{% static 'contas/img/viagens-ativo.svg' %}{% else %}{% static 'contas/img/viagens.svg' %}{% endif %}" width="24" height="24" alt="">Viagens
+  </a>
+  <a href="{% url 'contas:perfil' %}"{% if ativa == 'perfil' %} aria-current="page"{% endif %}>
+    <img src="{% if ativa == 'perfil' %}{% static 'contas/img/perfil-ativo.svg' %}{% else %}{% static 'contas/img/perfil.svg' %}{% endif %}" width="24" height="24" alt="">Perfil
+  </a>
+</nav>

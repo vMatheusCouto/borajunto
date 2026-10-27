@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Perfil · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'contas/css/perfil/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<section class="cabecalho">
+  <span class="foto">
+    {% if user.perfil.foto_url %}
+      <img src="{{ user.perfil.foto_url }}" alt="">
+    {% else %}
+      <span aria-hidden="true">{{ user.first_name|slice:':1'|upper }}{{ user.last_name|slice:':1'|upper }}</span>
+    {% endif %}
+  </span>
+  <div class="dados">
+    <h1>{{ user.get_full_name|default:user.username }}</h1>
+    {% if user.perfil %}
+      <p>{{ user.perfil.curso|default:'Estudante' }}{% if user.perfil.campus %} · Campus {{ user.perfil.campus }}{% endif %}</p>
+      <span class="vinculo">VÍNCULO ATIVO · SUAP</span>
+    {% endif %}
+  </div>
+</section>
+
+<div class="principal">
+  <dl class="numeros">
+    <div><dt>caronas</dt><dd>{{ caronas }}</dd></div>
+    <div>
+      <dt>{% if reputacao.quantidade %}avaliação{% else %}sem avaliações{% endif %}</dt>
+      <dd>{% if reputacao.quantidade %}{{ reputacao.media|floatformat:1 }}{% else %}–{% endif %}</dd>
+    </div>
+    <div>
+      <dt>matrícula ****</dt>
+      <dd>{{ user.perfil.matricula|slice:':4'|default:'–' }}</dd>
+    </div>
+  </dl>
+
+  <ul class="opcoes">
+    <li><a aria-disabled="true"><span>Editar perfil</span><span class="em-breve">Em breve</span></a></li>
+    <li><a aria-disabled="true"><span>Meus dados do SUAP</span><span class="em-breve">Em breve</span></a></li>
+    <li><a href="{% url 'caronas:viagens' %}"><span>Histórico completo</span><img src="{% static 'contas/img/chevron.svg' %}" width="16" height="16" alt=""></a></li>
+    <li><a aria-disabled="true"><span>Privacidade e contato</span><span class="em-breve">Em breve</span></a></li>
+    <li><a aria-disabled="true"><span>Denunciar um problema</span><span class="em-breve">Em breve</span></a></li>
+  </ul>
+
+  <p class="privacidade">Coletamos apenas os dados necessários ao funcionamento, conforme a LGPD. Seu contato só aparece para quem tem carona confirmada com você.</p>
+
+  <form method="post" action="{% url 'contas:sair' %}">
+    {% csrf_token %}
+    <button type="submit" class="sair">Encerrar sessão</button>
+  </form>
+</div>
+
+{% include 'barra.html' with ativa='perfil' %}
+{% endblock %}

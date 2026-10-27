@@ -9,7 +9,7 @@ class EntrarForm(AuthenticationForm):
         widget=forms.TextInput(attrs={'autofocus': True, 'autocomplete': 'username'}),
     )
     password = forms.CharField(
-        label='Senha do SUAP',
+        label='Senha',
         strip=False,
         widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'}),
     )

@@ -4,12 +4,8 @@
 {% block titulo %}Início · BoraJunto{% endblock %}
 
 {% block cabeca %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Space+Grotesk:wght@600;700&display=swap">
-<link rel="stylesheet" href="{% static 'contas/css/inicio/style.css'%}">
-
-
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'contas/css/inicio/style.css' %}">
 {% endblock %}
 
 {% block topo %}{% endblock %}
@@ -56,15 +52,13 @@
 </section>
 
 <section class="principal" aria-labelledby="titulo-lista">
-  <a class="botao" aria-disabled="true">+ Oferecer carona</a>
-  <div class="titulo-lista">
-    <h2 id="titulo-lista">
-      {% if caronas %}{{ caronas|length }} carona{{ caronas|length|pluralize }} encontrada{{ caronas|length|pluralize }}{% else %}Nenhuma carona encontrada{% endif %}
-    </h2>
-    <a aria-disabled="true">+ Oferecer</a>
-  </div>
+  <a class="botao" href="{% url 'caronas:oferecer' %}">+ Oferecer carona</a>
 
   {% if caronas %}
+    <div class="titulo-lista">
+      <h2 id="titulo-lista">{{ caronas|length }} carona{{ caronas|length|pluralize }} encontrada{{ caronas|length|pluralize }}</h2>
+      <a href="{% url 'caronas:oferecer' %}">+ Oferecer</a>
+    </div>
     <ul class="lista">
       {% for carona in caronas %}
         <li class="card">
@@ -92,19 +86,18 @@
       {% endfor %}
     </ul>
   {% else %}
-    <p class="vazio">Não há caronas disponíveis com esses filtros. Tente outra data ou outro trajeto.</p>
+    <div class="vazio">
+      <span class="icone" aria-hidden="true"><img src="{% static 'contas/img/viagens.svg' %}" width="24" height="24" alt=""></span>
+      <h2 id="titulo-lista">Nenhuma carona encontrada</h2>
+      {% if filtrada %}
+        <p>Não há caronas disponíveis com esses filtros. Tente outra data ou outro trajeto.</p>
+        <a class="botao contorno" href="{% url 'contas:inicio' %}"><span>Limpar filtros</span></a>
+      {% else %}
+        <p>Ainda não há caronas publicadas para os próximos dias. Que tal oferecer a sua?</p>
+      {% endif %}
+    </div>
   {% endif %}
 </section>
 
-<nav class="barra" aria-label="Navegação principal">
-  <a href="{% url 'contas:inicio' %}" aria-current="page">
-    <img src="{% static 'contas/img/inicio.svg' %}" width="24" height="24" alt="">Início
-  </a>
-  <a aria-disabled="true">
-    <img src="{% static 'contas/img/viagens.svg' %}" width="24" height="24" alt="">Viagens
-  </a>
-  <a aria-disabled="true">
-    <img src="{% static 'contas/img/perfil.svg' %}" width="24" height="24" alt="">Perfil
-  </a>
-</nav>
+{% include 'barra.html' with ativa='inicio' %}
 {% endblock %}

@@ -1,31 +1,70 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block titulo %}Entrar · BoraJunto{% endblock %}
 
+{% block cabeca %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Space+Grotesk:wght@600;700&display=swap">
+<link rel="stylesheet" href="{% static 'contas/css/entrar/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
 {% block conteudo %}
-<style>
-  .cartao { background: #fff; border: 1px solid var(--borda); border-radius: 8px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-  .campo { display: flex; flex-direction: column; gap: 4px; }
-  .campo input { font: inherit; padding: 10px 12px; border: 1px solid var(--borda); border-radius: 6px; }
-  .erro { color: var(--erro); margin: 0; }
-  .aviso { color: var(--suave); font-size: 14px; margin: 0; }
-  .entrar { padding: 10px; border: 0; border-radius: 6px; background: var(--destaque); color: #fff; font-weight: 600; }
-</style>
-<h1>Entrar</h1>
-<form method="post" class="cartao" novalidate>
+<h1 class="marca">Bora<br>Junto</h1>
+<p class="intro">Entre com sua conta institucional. Só estudantes com vínculo ativo entram na plataforma.</p>
+
+<form method="post" class="cartao{% if form.errors %} com-erro{% endif %}" novalidate>
   {% csrf_token %}
+  <h2>Entrar</h2>
   {% for erro in form.non_field_errors %}
     <p class="erro" role="alert">{{ erro }}</p>
   {% endfor %}
-  {% for campo in form %}
-    <div class="campo">
-      <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
-      {{ campo }}
-      {% for erro in campo.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
-    </div>
-  {% endfor %}
+
+  <div class="campo">
+    <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+    {{ form.username }}
+  </div>
+  {% for erro in form.username.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
+
+  <div class="campo">
+    <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+    {{ form.password }}
+    <button type="button" class="ver-senha" aria-pressed="false" aria-label="Mostrar senha">
+      <svg class="olho" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+      <svg class="olho-fechado" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>
+    </button>
+  </div>
+  {% for erro in form.password.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
+
+  <p class="aviso">Sua senha não é armazenada pelo aplicativo.</p>
   <input type="hidden" name="next" value="{{ next }}">
-  <button type="submit" class="entrar">Entrar com o SUAP</button>
-  <p class="aviso">Use a mesma matrícula e senha do SUAP. A senha é enviada só ao SUAP e não fica guardada no BoraJunto.</p>
+  <button type="submit" class="botao"><span class="giro" aria-hidden="true"></span><span class="rotulo">Entrar</span></button>
 </form>
+
+<p class="rodape">Só estudantes com vínculo ativo entram na plataforma.</p>
+
+<script>
+  const senha = document.getElementById('id_password');
+  const verSenha = document.querySelector('.ver-senha');
+
+  verSenha.addEventListener('click', function () {
+    if (senha.type === 'password') {
+      senha.type = 'text';
+      verSenha.setAttribute('aria-pressed', 'true');
+      verSenha.setAttribute('aria-label', 'Ocultar senha');
+    } else {
+      senha.type = 'password';
+      verSenha.setAttribute('aria-pressed', 'false');
+      verSenha.setAttribute('aria-label', 'Mostrar senha');
+    }
+  });
+
+  document.querySelector('.cartao').addEventListener('submit', function () {
+    this.classList.add('enviando');
+    document.querySelector('.rotulo').textContent = 'Entrando…';
+  });
+</script>
 {% endblock %}

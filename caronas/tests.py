@@ -32,3 +32,4 @@ class ReservaTests(TestCase):
                                status=Reserva.Status.CANCELADA)
         Reserva.objects.create(carona=self.carona, passageiro=self.passageiro)
         self.assertEqual(self.carona.reservas.count(), 2)
+

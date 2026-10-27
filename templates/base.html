@@ -33,5 +33,10 @@
   <main>
     {% block conteudo %}{% endblock %}
   </main>
+  {% if messages %}
+    <ul class="mensagens" role="status">
+      {% for mensagem in messages %}<li class="{{ mensagem.tags }}">{{ mensagem }}</li>{% endfor %}
+    </ul>
+  {% endif %}
 </body>
 </html>

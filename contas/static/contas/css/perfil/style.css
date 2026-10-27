@@ -1,0 +1,30 @@
+
+  .cabecalho { display: flex; align-items: center; gap: 16px; padding: 30px 22px 30px; border-radius: 0 0 30px 30px; background: var(--primaria); color: #fff; }
+  .cabecalho .foto { display: grid; place-items: center; width: 74px; height: 74px; flex: none; border: 2px dashed rgba(255, 255, 255, 0.45); border-radius: 37px; background: rgba(255, 255, 255, 0.2); font: 700 24px var(--fonte-titulo); overflow: hidden; }
+  .cabecalho .foto img { width: 100%; height: 100%; object-fit: cover; }
+  .cabecalho .dados { display: flex; flex-direction: column; align-items: flex-start; gap: 3.3px; min-width: 0; }
+  .cabecalho h1 { margin: 0; font: 700 22px var(--fonte-titulo); letter-spacing: -0.4px; }
+  .cabecalho p { margin: 0; font-size: 12.5px; line-height: 17.5px; opacity: 0.75; }
+  .vinculo { margin-top: 2px; padding: 4px 9px; border-radius: 10px; background: rgba(255, 255, 255, 0.2); font: 600 9.5px var(--fonte-titulo); letter-spacing: 0.3px; }
+
+  .principal { display: flex; flex-direction: column; gap: 14px; padding: 20px 22px 118px; }
+
+  .numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0; }
+  .numeros div { display: flex; flex-direction: column-reverse; align-items: center; gap: 2px; padding: 16px 8px; border-radius: 22px; background: #fff; }
+  .numeros dt { font-size: 11px; opacity: 0.5; }
+  .numeros dd { margin: 0; font: 700 24px var(--fonte-titulo); }
+
+  .opcoes { margin: 0; padding: 6px 18px; border-radius: 24px; background: #fff; list-style: none; }
+  .opcoes li + li { border-top: 1px solid var(--linha); }
+  .opcoes a { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 50px; color: var(--tinta); font-weight: 500; font-size: 14px; text-decoration: none; }
+  .opcoes a[href] img { transition: transform 0.2s; }
+  .opcoes a[href]:hover img { transform: translateX(3px); }
+  .opcoes a[aria-disabled="true"] { cursor: default; }
+  .opcoes a[aria-disabled="true"] > span:first-child { opacity: 0.45; }
+  .em-breve { padding: 3px 8px; border-radius: 8px; background: var(--superficie); font-size: 10.5px; opacity: 0.6; }
+
+  .privacidade { margin: 0; padding: 14px 16px; border-radius: 20px; background: var(--linha); font-size: 12px; line-height: 18px; opacity: 0.7; }
+
+  .sair { width: 100%; height: 52px; border: 1px solid rgba(232, 85, 43, 0.32); border-radius: 26px; background: none; color: var(--acento); font: 700 15px var(--fonte-titulo); transition: background-color 0.2s; }
+  .sair:hover { background: rgba(232, 85, 43, 0.06); }
+
