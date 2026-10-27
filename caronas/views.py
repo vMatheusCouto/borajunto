@@ -59,6 +59,29 @@ def oferecer_vagas(request):
 
 
 @login_required
+def detalhe(request, pk):
+    """Detalhes da carona com a opção de solicitar ou cancelar a vaga (RF14, UC05)."""
+    carona = get_object_or_404(
+        Carona.objects.com_vagas_restantes().com_reputacao_do_motorista()
+        .select_related('motorista__perfil'),
+        pk=pk,
+    )
+    motorista = carona.motorista
+    caronas_do_motorista = (
+        Carona.objects.filter(motorista=motorista, status='concluida').count()
+        + Reserva.objects.filter(passageiro=motorista, status='aceita', carona__status='concluida').count()
+    )
+    return render(request, 'caronas/detalhe.html', {
+        'carona': carona,
+        'caronas_do_motorista': caronas_do_motorista,
+        'livres': range(max(carona.vagas_restantes, 0)),
+        'ocupadas': range(carona.vagas - max(carona.vagas_restantes, 0)),
+        'reserva': carona.reservas.filter(passageiro=request.user, status__in=Reserva.ATIVAS).first(),
+        'disponivel': Carona.objects.disponiveis().filter(pk=carona.pk).exists(),
+    })
+
+
+@login_required
 def viagens(request):
     if request.GET.get('aba') == 'solicitei':
         reservas = Reserva.objects.filter(passageiro=request.user).order_by('-criada_em')

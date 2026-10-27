@@ -61,7 +61,7 @@
     </div>
     <ul class="lista">
       {% for carona in caronas %}
-        <li class="card">
+        <li><a class="card" href="{% url 'caronas:detalhe' carona.pk %}">
           <div class="trajeto">
             <div class="linha-tempo" aria-hidden="true"><span class="inicio"></span><span class="trilho"></span><span class="fim"></span></div>
             <div class="paradas">
@@ -82,7 +82,7 @@
             </span>
             <span class="vagas">{{ carona.vagas_restantes }} vaga{{ carona.vagas_restantes|pluralize }}</span>
           </div>
-        </li>
+        </a></li>
       {% endfor %}
     </ul>
   {% else %}

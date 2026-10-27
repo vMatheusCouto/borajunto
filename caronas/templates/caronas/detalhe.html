@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Detalhe da carona · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'caronas/css/detalhe/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<section class="cabecalho">
+  <a class="voltar" href="{% url 'contas:inicio' %}" aria-label="Voltar para o início">
+    <img src="{% static 'contas/img/voltar-claro.svg' %}" width="18" height="18" alt="">
+  </a>
+  <p>{{ carona.data_hora|date:'l, d \d\e F'|lower|capfirst }} · saída {{ carona.data_hora|time:'H:i' }}</p>
+  <h1>{{ carona.origem }}<br>→ {{ carona.destino }}</h1>
+</section>
+
+<div class="tela">
+  {% with motorista=carona.motorista %}
+    <section class="card motorista" aria-label="Motorista">
+      <span class="avatar" aria-hidden="true">{{ motorista.first_name|slice:':1'|upper }}{{ motorista.last_name|slice:':1'|upper }}</span>
+      <div>
+        <strong>{{ motorista.get_full_name|default:motorista.username }}</strong>
+        {% if motorista.perfil %}<p>{{ motorista.perfil.curso|default:'Estudante' }}{% if motorista.perfil.campus %} · Campus {{ motorista.perfil.campus }}{% endif %}</p>{% endif %}
+        <p class="reputacao">
+          {% if carona.reputacao_quantidade %}★ {{ carona.reputacao_media|floatformat:1 }}{% else %}Sem avaliações{% endif %}
+          · {{ caronas_do_motorista }} carona{{ caronas_do_motorista|pluralize }}{% if motorista.perfil %} · mat. {{ motorista.perfil.matricula|slice:':4' }}****{% endif %}
+        </p>
+      </div>
+    </section>
+  {% endwith %}
+
+  <section class="card" aria-label="Trajeto">
+    <div class="trajeto">
+      <div class="linha-tempo" aria-hidden="true"><span class="inicio"></span><span class="trilho"></span><span class="fim"></span></div>
+      <div class="paradas">
+        <strong>{{ carona.origem }}</strong>
+        <p>saída {{ carona.data_hora|time:'H:i' }} · encontro em {{ carona.ponto_encontro }}</p>
+        <strong class="chegada">{{ carona.destino }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="titulo-vagas">
+    <h2 id="titulo-vagas">Vagas</h2>
+    <ul class="assentos" aria-label="{{ carona.vagas_restantes }} de {{ carona.vagas }} vagas livres">
+      {% for vaga in livres %}
+        <li><img src="{% static 'contas/img/vaga.svg' %}" width="16" height="16" alt=""></li>
+      {% endfor %}
+      {% for vaga in ocupadas %}
+        <li class="ocupado"><img src="{% static 'contas/img/vaga.svg' %}" width="16" height="16" alt=""></li>
+      {% endfor %}
+    </ul>
+    {% if carona.observacoes %}<p class="observacoes">{{ carona.observacoes|linebreaksbr }}</p>{% endif %}
+  </section>
+
+  <p class="aviso">
+    <img src="{% static 'contas/img/aviso.svg' %}" width="17" height="17" alt="">
+    <span>O contato do motorista é liberado só depois que ele confirmar sua vaga. A plataforma não é responsável pelo transporte nem por acertos financeiros.</span>
+  </p>
+</div>
+
+<div class="rodape">
+  {% if carona.motorista == user %}
+    <a class="botao contorno" href="{% url 'caronas:viagens' %}"><span>Gerenciar em Minhas viagens</span></a>
+  {% endif %}
+</div>
+{% endblock %}
