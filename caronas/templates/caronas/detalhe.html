@@ -67,6 +67,13 @@
 <div class="rodape">
   {% if carona.motorista == user %}
     <a class="botao contorno" href="{% url 'caronas:viagens' %}"><span>Gerenciar em Minhas viagens</span></a>
+  {% elif disponivel %}
+    <form method="post" action="{% url 'caronas:solicitar' carona.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="botao">Solicitar vaga</button>
+    </form>
+  {% else %}
+    <span class="botao" aria-disabled="true">Carona indisponível</span>
   {% endif %}
 </div>
 {% endblock %}
