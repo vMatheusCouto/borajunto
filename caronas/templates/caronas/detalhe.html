@@ -67,6 +67,12 @@
 <div class="rodape">
   {% if carona.motorista == user %}
     <a class="botao contorno" href="{% url 'caronas:viagens' %}"><span>Gerenciar em Minhas viagens</span></a>
+  {% elif reserva %}
+    <form method="post" action="{% url 'caronas:cancelar' reserva.pk %}">
+      {% csrf_token %}
+      <p class="situacao">{% if reserva.status == 'aceita' %}Sua vaga está confirmada.{% else %}Aguardando a resposta do motorista.{% endif %}</p>
+      <button type="submit" class="botao cancelar">{% if reserva.status == 'aceita' %}Cancelar reserva{% else %}Cancelar solicitação{% endif %}</button>
+    </form>
   {% elif disponivel %}
     <form method="post" action="{% url 'caronas:solicitar' carona.pk %}">
       {% csrf_token %}

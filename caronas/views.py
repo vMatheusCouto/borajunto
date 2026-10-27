@@ -123,6 +123,37 @@ def solicitar(request, pk):
 
 
 @login_required
+def cancelar(request, pk):
+    """Cancela uma solicitação pendente ou uma reserva confirmada (UC05 A1, A2)."""
+    reserva = get_object_or_404(Reserva, pk=pk, passageiro=request.user)
+    if request.method != 'POST':
+        return redirect(reverse('caronas:viagens') + '?aba=solicitei')
+
+    with transaction.atomic():
+        carona = Carona.objects.select_for_update().get(pk=reserva.carona_id)
+        reserva.refresh_from_db()
+        if reserva.status not in Reserva.ATIVAS or carona.status in ('concluida', 'cancelada'):
+            messages.error(request, 'Essa solicitação não pode mais ser cancelada.')
+        else:
+            confirmada = reserva.status == 'aceita'
+            reserva.status = 'cancelada'
+            reserva.save()
+            # A vaga devolvida reabre a carona para novas solicitações (RN12).
+            if confirmada and carona.status == 'lotada':
+                carona.status = 'publicada'
+                carona.save()
+            nome = request.user.get_full_name() or request.user.username
+            Notificacao.objects.create(
+                destinatario=carona.motorista,
+                carona=carona,
+                tipo='cancelamento',
+                mensagem=f'{nome} cancelou {"a reserva" if confirmada else "o pedido de vaga"} em {carona.origem} → {carona.destino}.',
+            )
+            messages.success(request, 'Reserva cancelada.' if confirmada else 'Solicitação cancelada.')
+    return redirect(reverse('caronas:viagens') + '?aba=solicitei')
+
+
+@login_required
 def viagens(request):
     if request.GET.get('aba') == 'solicitei':
         reservas = Reserva.objects.filter(passageiro=request.user).order_by('-criada_em')
