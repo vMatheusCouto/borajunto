@@ -80,7 +80,7 @@ WSGI_APPLICATION = "borajunto.wsgi.application"
 
 PWA_APP_NAME = "BoraJunto"
 PWA_APP_DESCRIPTION = "Meu app de caronas"
-PWA_APP_THEME_COLOR = "#0A0302"
+PWA_APP_THEME_COLOR = "#1D5BFF"
 PWA_APP_BACKGROUND_COLOR = "#ffffff"
 PWA_APP_DISPLAY = "standalone"
 PWA_APP_SCOPE = "/"
