@@ -132,7 +132,7 @@ def cancelar(request, pk):
     with transaction.atomic():
         carona = Carona.objects.select_for_update().get(pk=reserva.carona_id)
         reserva.refresh_from_db()
-        if reserva.status not in Reserva.ATIVAS or carona.status in ('concluida', 'cancelada'):
+        if reserva.status not in Reserva.ATIVAS or carona.status in ('concluida', 'cancelada') or carona.data_hora <= timezone.now():
             messages.error(request, 'Essa solicitação não pode mais ser cancelada.')
         else:
             confirmada = reserva.status == 'aceita'
