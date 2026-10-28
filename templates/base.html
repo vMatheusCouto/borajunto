@@ -1,42 +1,90 @@
+{% load static %}
+
 <!doctype html>
 <html lang="pt-br">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block titulo %}BoraJunto{% endblock %}</title>
-  {% block cabeca %}{% endblock %}
-  <style>
-    :root { --fundo: #f6f8fb; --texto: #1b2330; --suave: #5b6676; --borda: #cfd6e0; --destaque: #1f5fa8; --erro: #a3262f; }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.5 system-ui, sans-serif; }
-    header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 16px; background: #fff; border-bottom: 1px solid var(--borda); }
-    header strong { font-size: 18px; }
-    main { max-width: 640px; margin: 0 auto; padding: 32px 16px; }
-    a, button { color: var(--destaque); }
-    button { font: inherit; cursor: pointer; }
-    :focus-visible { outline: 3px solid var(--destaque); outline-offset: 2px; }
-    .sem-borda { background: none; border: 0; padding: 0; text-decoration: underline; }
-  </style>
-</head>
-<body>
-  {% block topo %}
-  <header>
-    <strong>BoraJunto</strong>
-    {% if user.is_authenticated %}
+  {% load pwa %}
+  {% progressive_web_app_meta %}
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block titulo %}BoraJunto{% endblock %}</title>
+    {% block cabeca %}{% endblock %}
+    <style>
+      :root {
+        --fundo: #f6f8fb;
+        --texto: #1b2330;
+        --suave: #5b6676;
+        --borda: #cfd6e0;
+        --destaque: #1f5fa8;
+        --erro: #a3262f;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--fundo);
+        color: var(--texto);
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 12px 16px;
+        background: #fff;
+        border-bottom: 1px solid var(--borda);
+      }
+      header strong {
+        font-size: 18px;
+      }
+      main {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 32px 16px;
+      }
+      a,
+      button {
+        color: var(--destaque);
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+      }
+      :focus-visible {
+        outline: 3px solid var(--destaque);
+        outline-offset: 2px;
+      }
+      .sem-borda {
+        background: none;
+        border: 0;
+        padding: 0;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    {% block topo %}
+    <header>
+      <strong>BoraJunto</strong>
+      {% if user.is_authenticated %}
       <form method="post" action="{% url 'contas:sair' %}">
         {% csrf_token %}
         <button type="submit" class="sem-borda">Sair</button>
       </form>
-    {% endif %}
-  </header>
-  {% endblock %}
-  <main>
-    {% block conteudo %}{% endblock %}
-  </main>
-  {% if messages %}
+      {% endif %}
+    </header>
+    {% endblock %}
+    <main>{% block conteudo %}{% endblock %}</main>
+    {% if messages %}
     <ul class="mensagens" role="status">
-      {% for mensagem in messages %}<li class="{{ mensagem.tags }}">{{ mensagem }}</li>{% endfor %}
+      {% for mensagem in messages %}
+      <li class="{{ mensagem.tags }}">{{ mensagem }}</li>
+      {% endfor %}
     </ul>
-  {% endif %}
-</body>
+    {% endif %}
+  </body>
 </html>

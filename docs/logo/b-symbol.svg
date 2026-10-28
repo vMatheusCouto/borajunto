@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"><title>BoraJunto B</title>
+<path fill-rule="evenodd" d="M100 52 A76 76 0 1 1 99.99 52 Z M100 84 A44 44 0 1 0 100.01 84 Z"/>
+<circle cx="164" cy="128" r="72" fill="#fff"/>
+<circle cx="164" cy="128" r="60"/>
+</svg>
