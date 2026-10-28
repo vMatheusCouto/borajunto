@@ -1,9 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 
 from notificacoes.models import Notificacao
@@ -56,6 +57,100 @@ def oferecer_vagas(request):
     else:
         form = VagasForm()
     return render(request, 'caronas/oferecer_vagas.html', {'form': form})
+
+
+@login_required
+def detalhe(request, pk):
+    """Detalhes da carona com a opção de solicitar ou cancelar a vaga (RF14, UC05)."""
+    carona = get_object_or_404(
+        Carona.objects.com_vagas_restantes().com_reputacao_do_motorista()
+        .select_related('motorista__perfil'),
+        pk=pk,
+    )
+    motorista = carona.motorista
+    caronas_do_motorista = (
+        Carona.objects.filter(motorista=motorista, status='concluida').count()
+        + Reserva.objects.filter(passageiro=motorista, status='aceita', carona__status='concluida').count()
+    )
+    return render(request, 'caronas/detalhe.html', {
+        'carona': carona,
+        'caronas_do_motorista': caronas_do_motorista,
+        'livres': range(max(carona.vagas_restantes, 0)),
+        'ocupadas': range(carona.vagas - max(carona.vagas_restantes, 0)),
+        'reserva': carona.reservas.filter(passageiro=request.user, status__in=Reserva.ATIVAS).first(),
+        'disponivel': Carona.objects.disponiveis().filter(pk=carona.pk).exists(),
+    })
+
+
+@login_required
+def solicitar(request, pk):
+    """Registra a solicitação de vaga como pendente e avisa o motorista (UC05)."""
+    detalhe_url = reverse('caronas:detalhe', args=[pk])
+    if request.method != 'POST':
+        return redirect(detalhe_url)
+
+    with transaction.atomic():
+        # Trava a carona para que duas solicitações não disputem a última vaga (UC05 E1).
+        carona = get_object_or_404(Carona.objects.select_for_update(), pk=pk)
+        saida = carona.data_hora
+        proximas = Reserva.objects.filter(
+            passageiro=request.user,
+            status__in=Reserva.ATIVAS,
+            carona__data_hora__gt=saida - timedelta(minutes=60),
+            carona__data_hora__lt=saida + timedelta(minutes=60),
+        ).exclude(carona=carona)
+
+        if carona.motorista_id == request.user.pk:
+            messages.error(request, 'Você não pode solicitar vaga na sua própria carona.')
+        elif not Carona.objects.disponiveis().filter(pk=carona.pk).exists():
+            messages.error(request, 'Essa carona não está mais recebendo solicitações.')
+        elif carona.reservas.filter(passageiro=request.user, status__in=Reserva.ATIVAS).exists():
+            messages.error(request, 'Você já solicitou uma vaga nessa carona.')
+        elif proximas.exists():
+            messages.error(request, 'Você já tem uma reserva em outra carona com saída a menos de 60 minutos dessa.')
+        else:
+            Reserva.objects.create(carona=carona, passageiro=request.user)
+            nome = request.user.get_full_name() or request.user.username
+            Notificacao.objects.create(
+                destinatario=carona.motorista,
+                carona=carona,
+                tipo='solicitacao',
+                mensagem=f'{nome} pediu uma vaga em {carona.origem} → {carona.destino}.',
+            )
+            messages.success(request, 'Vaga solicitada. Avisamos quando o motorista responder.')
+            return redirect(reverse('caronas:viagens') + '?aba=solicitei')
+    return redirect(detalhe_url)
+
+
+@login_required
+def cancelar(request, pk):
+    """Cancela uma solicitação pendente ou uma reserva confirmada (UC05 A1, A2)."""
+    reserva = get_object_or_404(Reserva, pk=pk, passageiro=request.user)
+    if request.method != 'POST':
+        return redirect(reverse('caronas:viagens') + '?aba=solicitei')
+
+    with transaction.atomic():
+        carona = Carona.objects.select_for_update().get(pk=reserva.carona_id)
+        reserva.refresh_from_db()
+        if reserva.status not in Reserva.ATIVAS or carona.status in ('concluida', 'cancelada') or carona.data_hora <= timezone.now():
+            messages.error(request, 'Essa solicitação não pode mais ser cancelada.')
+        else:
+            confirmada = reserva.status == 'aceita'
+            reserva.status = 'cancelada'
+            reserva.save()
+            # A vaga devolvida reabre a carona para novas solicitações (RN12).
+            if confirmada and carona.status == 'lotada':
+                carona.status = 'publicada'
+                carona.save()
+            nome = request.user.get_full_name() or request.user.username
+            Notificacao.objects.create(
+                destinatario=carona.motorista,
+                carona=carona,
+                tipo='cancelamento',
+                mensagem=f'{nome} cancelou {"a reserva" if confirmada else "o pedido de vaga"} em {carona.origem} → {carona.destino}.',
+            )
+            messages.success(request, 'Reserva cancelada.' if confirmada else 'Solicitação cancelada.')
+    return redirect(reverse('caronas:viagens') + '?aba=solicitei')
 
 
 @login_required
