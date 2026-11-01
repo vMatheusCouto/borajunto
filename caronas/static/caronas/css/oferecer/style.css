@@ -37,3 +37,4 @@
   .confirmar { position: fixed; left: 0; right: 0; bottom: 0; max-width: 480px; margin: 0 auto; padding: 16px 22px 26px; background: linear-gradient(rgba(247, 246, 251, 0), var(--superficie) 32%); }
   .confirmar .botao { width: 100%; height: 56px; border-radius: 28px; font-size: 16px; }
 
+  .confirmar .cancelar-carona { background: var(--acento); }
