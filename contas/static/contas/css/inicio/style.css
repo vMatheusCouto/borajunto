@@ -53,17 +53,3 @@
   .motorista .nota { margin-left: 5px; font-weight: 400; color: rgba(26, 17, 40, 0.45); }
   .vagas { padding: 6px 12px; border-radius: 14px; background: var(--superficie); color: var(--primaria); font: 700 12px var(--fonte-titulo); white-space: nowrap; }
 
-  .modal-notificacoes { width: calc(100% - 32px); max-width: 416px; margin: auto; padding: 20px; border: 0; border-radius: 24px; box-shadow: 0 24px 48px -12px rgba(19, 18, 40, 0.3); }
-  .modal-notificacoes::backdrop { background: rgba(19, 18, 40, 0.45); }
-  .cabecalho-modal { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
-  .cabecalho-modal h2 { margin: 0; font: 600 17px var(--fonte-titulo); }
-  .fechar-modal { width: 32px; height: 32px; border: 0; border-radius: 16px; background: var(--superficie); color: var(--tinta); font-size: 18px; line-height: 1; }
-  .vazio-modal { margin: 0; padding: 20px 0; text-align: center; font-size: 13.5px; opacity: 0.6; }
-  .lista-notificacoes { list-style: none; margin: 0; padding: 0; max-height: 60vh; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
-  .notificacao { position: relative; padding: 12px 10px 12px 20px; border-radius: 14px; }
-  .notificacao + .notificacao { border-top: 1px solid var(--linha); }
-  .notificacao.nao-lida::before { content: ''; position: absolute; left: 4px; top: 18px; width: 8px; height: 8px; border-radius: 4px; background: var(--primaria); }
-  .notificacao .mensagem { margin: 0 0 4px; font-size: 14px; line-height: 19px; }
-  .notificacao.nao-lida .mensagem { font-weight: 600; }
-  .notificacao time { font-size: 12px; opacity: 0.5; }
-
