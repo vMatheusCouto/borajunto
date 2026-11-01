@@ -30,6 +30,12 @@ uv run python manage.py migrate
 uv run python manage.py runserver
 ```
 
+Os lembretes de 60 minutos antes da carona são gerados por um comando, que deve rodar a cada poucos minutos (por exemplo, no cron):
+
+```bash
+*/5 * * * * cd /caminho/do/borajunto && uv run python manage.py enviar_lembretes
+```
+
 O login usa a matrícula e a senha do SUAP pela biblioteca [suapy](https://pypi.org/project/suapy/). Para apontar para outra instituição, defina `SUAP_URL`.
 
 ## Documentação
