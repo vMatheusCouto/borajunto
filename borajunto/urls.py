@@ -23,5 +23,6 @@ urlpatterns = [
     path("", include("contas.urls")),
     path("caronas/", include("caronas.urls")),
     path("notificacoes/", include("notificacoes.urls")),
+    path("avaliacoes/", include("avaliacoes.urls")),
     path("", include("pwa.urls")),
 ]
