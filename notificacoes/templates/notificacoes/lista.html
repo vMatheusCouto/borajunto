@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Notificações · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'notificacoes/css/lista/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<div class="tela">
+  <div class="cabecalho">
+    <a class="voltar" href="{% url 'contas:inicio' %}" aria-label="Voltar para o início">
+      <img src="{% static 'contas/img/voltar.svg' %}" width="18" height="18" alt="">
+    </a>
+    <h1>Notificações</h1>
+  </div>
+
+  {% if notificacoes %}
+    <ul class="lista-notificacoes">
+      {% for notificacao in notificacoes %}
+        <li class="notificacao {{ notificacao.tipo }}{% if not notificacao.lida %} nao-lida{% endif %}">
+          <span class="icone {{ notificacao.tipo }}" aria-hidden="true">
+            {% if notificacao.tipo == 'decisao' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="5 13 10 18 19 7"></polyline></svg>
+            {% elif notificacao.tipo == 'cancelamento' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg>
+            {% elif notificacao.tipo == 'lembrete' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg>
+            {% elif notificacao.tipo == 'alteracao' %}
+              <span class="letra">i</span>
+            {% else %}
+              <span class="letra">!</span>
+            {% endif %}
+          </span>
+          <div class="conteudo">
+            <p class="tipo">{{ notificacao.get_tipo_display }}</p>
+            <p class="mensagem">{{ notificacao.mensagem }}</p>
+            <time datetime="{{ notificacao.criada_em|date:'c' }}">{{ notificacao.criada_em|timesince }} atrás</time>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="vazio">Nenhuma notificação por aqui ainda.</p>
+  {% endif %}
+</div>
+{% endblock %}
