@@ -1,4 +1,4 @@
-var CACHE = "borajunto-v1";
+var CACHE = "borajunto-v2";
 var OFFLINE_URL = "/offline/";
 var PRECACHE = [
     OFFLINE_URL,
@@ -57,19 +57,23 @@ self.addEventListener("fetch", function (event) {
         return;
     }
 
+    // Arquivos estáticos: busca sempre a versão nova na rede e guarda uma cópia;
+    // a cópia guardada só é usada quando não há conexão.
     if (url.pathname.startsWith("/static/")) {
         event.respondWith(
-            caches.open(CACHE).then(function (cache) {
-                return cache.match(request).then(function (guardada) {
-                    var daRede = fetch(request).then(function (resposta) {
-                        if (resposta.ok && !resposta.redirected) {
-                            cache.put(request, resposta.clone());
-                        }
-                        return resposta;
-                    });
-                    return guardada || daRede;
-                });
-            }),
+            fetch(request)
+                .then(function (resposta) {
+                    if (resposta.ok) {
+                        var copia = resposta.clone();
+                        caches.open(CACHE).then(function (cache) {
+                            cache.put(request, copia);
+                        });
+                    }
+                    return resposta;
+                })
+                .catch(function () {
+                    return caches.match(request);
+                }),
         );
     }
 });
