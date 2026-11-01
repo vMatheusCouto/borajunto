@@ -4,9 +4,10 @@
     --superficie: #f7f6fb; --tinta: #131228; --linha: rgba(19, 18, 40, 0.07); --borda: rgba(19, 18, 40, 0.14);
     --avatar: #cbd6f5; --alerta: #ffce3d; --fonte-titulo: 'Space Grotesk', system-ui, sans-serif;
     --fonte-texto: 'DM Sans', system-ui, sans-serif;
+    --largura-app: 480px; /* largura máxima do app; aumenta no computador (veja o fim do arquivo) */
   }
   html body { background: var(--superficie); color: var(--tinta); font-family: var(--fonte-texto); }
-  body > main { max-width: 480px; padding: 0; }
+  body > main { max-width: var(--largura-app); padding: 0; }
 
   .botao { display: flex; align-items: center; justify-content: center; height: 50px; padding: 0 24px; border: 0; border-radius: 25px; background: var(--primaria); color: #fff; font: 700 15px var(--fonte-titulo); text-decoration: none; transition: transform 0.15s, filter 0.2s; }
   .botao:hover { filter: brightness(1.08); }
@@ -17,12 +18,12 @@
 
   .avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 15px; background: var(--avatar); color: var(--primaria-escura); font: 700 11px var(--fonte-titulo); flex: none; }
 
-  .barra { position: fixed; left: 16px; right: 16px; bottom: 16px; max-width: 448px; margin: 0 auto; height: 72px; padding: 8px; display: flex; background: #fff; border-radius: 32px; filter: drop-shadow(0 8px 12px rgba(18, 18, 41, 0.1)); z-index: 10; }
+  .barra { position: fixed; left: 16px; right: 16px; bottom: 16px; max-width: calc(var(--largura-app) - 32px); margin: 0 auto; height: 72px; padding: 8px; display: flex; background: #fff; border-radius: 32px; filter: drop-shadow(0 8px 12px rgba(18, 18, 41, 0.1)); z-index: 10; }
   .barra a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 28px; font-weight: 500; font-size: 11px; color: rgba(19, 18, 40, 0.38); text-decoration: none; transition: background-color 0.2s; }
   .barra a:not([aria-current]):hover { background: var(--superficie); }
   .barra a[aria-current] { background: var(--primaria); color: #fff; }
 
-  .mensagens { position: fixed; left: 16px; right: 16px; bottom: 100px; max-width: 448px; margin: 0 auto; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; z-index: 20; pointer-events: none; }
+  .mensagens { position: fixed; left: 16px; right: 16px; bottom: 100px; max-width: calc(var(--largura-app) - 32px); margin: 0 auto; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; z-index: 20; pointer-events: none; }
   .mensagens li { padding: 14px 18px; border-radius: 18px; background: var(--tinta); color: #fff; font-size: 13.5px; line-height: 19px; box-shadow: 0 12px 24px -12px rgba(19, 18, 40, 0.5); animation: aviso 5s ease both; }
   .mensagens .error { background: var(--acento); }
   @keyframes aviso { 0% { opacity: 0; transform: translateY(12px); } 8%, 85% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(6px); visibility: hidden; } }
@@ -36,3 +37,11 @@
     .botao, .barra a { transition: none; }
   }
 
+
+  /* Computador: o app continua em uma coluna, como no celular, só que mais larga,
+     no centro da tela, com sombra e uma cor de fundo nas laterais. */
+  @media (min-width: 900px) {
+    :root { --largura-app: 560px; }
+    html body { background: #e9e8f6; }
+    body > main { min-height: 100vh; background: var(--superficie); box-shadow: 0 0 48px rgba(19, 18, 40, 0.08); }
+  }

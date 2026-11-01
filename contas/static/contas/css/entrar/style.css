@@ -55,3 +55,8 @@
     .campo, .ver-senha, .botao { transition: none; }
   }
 
+
+  /* Computador: o formulário de login fica no meio da tela. */
+  @media (min-width: 900px) {
+    body > main { justify-content: center; padding-top: 32px; }
+  }
