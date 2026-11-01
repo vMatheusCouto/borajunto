@@ -62,6 +62,21 @@ class Carona(models.Model):
     def __str__(self):
         return f'{self.origem} → {self.destino} ({self.data_hora:%d/%m/%Y %H:%M})'
 
+    @property
+    def aberta(self):
+        """Publicada ou lotada: ainda não saiu, não terminou e não foi cancelada."""
+        return self.status in (self.Status.PUBLICADA, self.Status.LOTADA)
+
+    def atualizar_lotacao(self):
+        """Alterna entre publicada e lotada conforme as vagas confirmadas (RF17)."""
+        if not self.aberta:
+            return
+        confirmadas = self.reservas.filter(status=Reserva.Status.ACEITA).count()
+        situacao = self.Status.LOTADA if confirmadas >= self.vagas else self.Status.PUBLICADA
+        if situacao != self.status:
+            self.status = situacao
+            self.save(update_fields=['status'])
+
 
 class Reserva(models.Model):
     """Pedido de vaga de um passageiro; vira reserva confirmada quando aceito (RN08)."""
@@ -105,4 +120,10 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f'{self.passageiro} em {self.carona} ({self.get_status_display()})'
+
+    @property
+    def cancelavel(self):
+        """O passageiro pode desistir enquanto a carona não sai (RF18, RN12)."""
+        return (self.status in self.ATIVAS and self.carona.aberta
+                and self.carona.data_hora > timezone.now())
 

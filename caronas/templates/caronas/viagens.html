@@ -61,7 +61,11 @@
                     </form>
                     <form method="post" action="{% url 'caronas:aceitar' reserva.pk %}">
                       {% csrf_token %}
-                      <button type="submit" class="botao">Aceitar</button>
+                      {% if carona.livres %}
+                        <button type="submit" class="botao">Aceitar</button>
+                      {% else %}
+                        <button type="button" class="botao" aria-disabled="true" disabled>Carona lotada</button>
+                      {% endif %}
                     </form>
                   </div>
                 </li>
@@ -91,7 +95,7 @@
                 <span class="selo {{ reserva.status }}">{% if reserva.status == 'aceita' %}Confirmada{% else %}{{ reserva.get_status_display }}{% endif %}</span>
               </div>
               <p>{{ carona.data_hora|date:'D, d M · H:i'|lower|capfirst }} · {{ carona.motorista.get_full_name|default:carona.motorista.username }}</p>
-              {% if reserva.status in 'pendente aceita' and carona.status != 'concluida' and carona.status != 'cancelada' %}
+              {% if reserva.cancelavel %}
                 <form method="post" action="{% url 'caronas:cancelar' reserva.pk %}">
                   {% csrf_token %}
                   <button type="submit" class="botao cancelar">{% if reserva.status == 'aceita' %}Cancelar reserva{% else %}Cancelar solicitação{% endif %}</button>
