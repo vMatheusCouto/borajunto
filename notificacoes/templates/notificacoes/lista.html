@@ -40,6 +40,11 @@
             <p class="tipo">{{ notificacao.get_tipo_display }}</p>
             <p class="mensagem">{{ notificacao.mensagem }}</p>
             <time datetime="{{ notificacao.criada_em|date:'c' }}">{{ notificacao.criada_em|timesince }} atrás</time>
+            {% if notificacao.carona %}
+              <a class="ver-carona" href="{% url 'caronas:detalhe' notificacao.carona.pk %}">Ver carona</a>
+            {% elif notificacao.tipo != 'lembrete' %}
+              <span class="ver-carona indisponivel">Carona não está mais disponível</span>
+            {% endif %}
           </div>
         </li>
       {% endfor %}
