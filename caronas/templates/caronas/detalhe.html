@@ -67,6 +67,10 @@
 <div class="rodape">
   {% if carona.motorista == user %}
     <a class="botao contorno" href="{% url 'caronas:viagens' %}"><span>Gerenciar em Minhas viagens</span></a>
+  {% elif reserva and carona.status == 'concluida' %}
+    <a class="botao" href="{% url 'avaliacoes:avaliar' carona.pk %}">Avaliar participantes</a>
+  {% elif reserva and not reserva.cancelavel %}
+    <p class="situacao">{% if reserva.status == 'aceita' %}Sua vaga está confirmada. Não dá mais para cancelar.{% else %}A carona já está no horário de saída.{% endif %}</p>
   {% elif reserva %}
     <form method="post" action="{% url 'caronas:cancelar' reserva.pk %}">
       {% csrf_token %}
