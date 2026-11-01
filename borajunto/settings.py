@@ -79,7 +79,7 @@ WSGI_APPLICATION = "borajunto.wsgi.application"
 # PWA Settings
 
 PWA_APP_NAME = "BoraJunto"
-PWA_APP_DESCRIPTION = "Meu app de caronas"
+PWA_APP_DESCRIPTION = "Caronas estudantis entre quem vai para o mesmo lugar"
 PWA_APP_THEME_COLOR = "#1D5BFF"
 PWA_APP_BACKGROUND_COLOR = "#ffffff"
 PWA_APP_DISPLAY = "standalone"
@@ -110,27 +110,24 @@ PWA_APP_ICONS = [
 PWA_APP_ICONS_APPLE = [
     {"src": "/static/images/icons/apple-touch-icon.png", "sizes": "180x180"}
 ]
-PWA_APP_SPLASH_SCREEN = [
-    {
-        "src": "/static/images/icons/splash-640x1136.png",
-        "media": "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)",
-    }
-]
+# Sem imagens de abertura e capturas de tela por enquanto; as listas vazias
+# evitam que o django-pwa aponte para arquivos padrão que não existem.
+PWA_APP_SPLASH_SCREEN = []
+PWA_APP_SCREENSHOTS = []
 PWA_APP_DIR = "ltr"
-PWA_APP_LANG = "en-US"
+PWA_APP_LANG = "pt-BR"
+PWA_APP_DEBUG_MODE = DEBUG
 PWA_APP_SHORTCUTS = [
     {
-        "name": "Shortcut",
-        "url": "/target",
-        "description": "Shortcut to a page in my application",
-    }
-]
-PWA_APP_SCREENSHOTS = [
+        "name": "Oferecer carona",
+        "url": "/caronas/oferecer/",
+        "description": "Publicar uma nova carona",
+    },
     {
-        "src": "/static/images/icons/splash-750x1334.png",
-        "sizes": "750x1334",
-        "type": "image/png",
-    }
+        "name": "Minhas viagens",
+        "url": "/caronas/viagens/",
+        "description": "Ver caronas oferecidas e vagas solicitadas",
+    },
 ]
 
 
