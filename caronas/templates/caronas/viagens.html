@@ -111,6 +111,7 @@
                 <span class="selo {{ carona.status }}">{{ carona.get_status_display }}</span>
               </div>
               <p>{{ carona.data_hora|date:'D, d M · H:i'|lower|capfirst }}{% if carona.motivo_cancelamento %} · {{ carona.motivo_cancelamento|truncatechars:60 }}{% endif %}</p>
+              {% if carona.status == 'concluida' %}<a class="avaliar" href="{% url 'avaliacoes:avaliar' carona.pk %}">Avaliar passageiros</a>{% endif %}
             </li>
           {% endfor %}
         </ul>
@@ -128,6 +129,9 @@
                 <span class="selo {{ reserva.status }}">{% if reserva.status == 'aceita' %}Confirmada{% else %}{{ reserva.get_status_display }}{% endif %}</span>
               </div>
               <p>{{ carona.data_hora|date:'D, d M · H:i'|lower|capfirst }} · {{ carona.motorista.get_full_name|default:carona.motorista.username }}</p>
+              {% if reserva.status == 'aceita' and carona.status == 'concluida' %}
+                <a class="avaliar" href="{% url 'avaliacoes:avaliar' carona.pk %}">Avaliar participantes</a>
+              {% endif %}
               {% if reserva.cancelavel %}
                 <form method="post" action="{% url 'caronas:cancelar' reserva.pk %}">
                   {% csrf_token %}
