@@ -104,7 +104,18 @@
     <h2 id="titulo-notificacoes">Notificações</h2>
     <button type="button" class="fechar-modal" aria-label="Fechar">×</button>
   </div>
-  <p class="vazio-modal">Nenhuma notificação por aqui ainda.</p>
+  {% if notificacoes %}
+    <ul class="lista-notificacoes">
+      {% for notificacao in notificacoes %}
+        <li class="notificacao{% if not notificacao.lida %} nao-lida{% endif %}">
+          <p class="mensagem">{{ notificacao.mensagem }}</p>
+          <time datetime="{{ notificacao.criada_em|date:'c' }}">{{ notificacao.criada_em|timesince }} atrás</time>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="vazio-modal">Nenhuma notificação por aqui ainda.</p>
+  {% endif %}
 </dialog>
 
 {% include 'barra.html' with ativa='inicio' %}

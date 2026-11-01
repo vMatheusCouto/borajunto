@@ -34,12 +34,14 @@ def inicio(request):
                .select_related('motorista'))
     if busca.is_bound and busca.is_valid():
         caronas = busca.filtrar(caronas)
+    notificacoes = request.user.notificacoes.all()
     return render(request, 'contas/inicio.html', {
         'saudacao': saudacao(timezone.localtime()),
         'busca': busca,
         'filtrada': any(request.GET.values()),
         'caronas': caronas,
-        'notificacoes_nao_lidas': request.user.notificacoes.filter(lida=False).exists(),
+        'notificacoes': notificacoes,
+        'notificacoes_nao_lidas': notificacoes.filter(lida=False).exists(),
     })
 
 
