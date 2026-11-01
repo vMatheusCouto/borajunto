@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 
+from notificacoes.lembretes import lembrar, perto_do_horario
 from notificacoes.models import Notificacao
 
 from .forms import CancelarCaronaForm, EditarCaronaForm, TrajetoForm, VagasForm
@@ -208,6 +209,9 @@ def aceitar(request, pk):
                 tipo='decisao',
                 mensagem=f'Sua vaga em {carona.origem} → {carona.destino} foi confirmada.',
             )
+            # Reserva confirmada a menos de 60 minutos da saída já recebe o lembrete (RN16).
+            if perto_do_horario(carona):
+                lembrar(carona)
             messages.success(request, 'Vaga confirmada.')
     return redirect('caronas:viagens')
 
