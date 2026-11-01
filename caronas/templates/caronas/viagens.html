@@ -37,10 +37,25 @@
                 <li><img src="{% static 'contas/img/vaga.svg' %}" width="16" height="16" alt="Vaga livre"></li>
               {% endfor %}
             </ul>
-            <a class="editar" aria-disabled="true">Editar</a>
+            {% if carona.aberta %}<a class="editar" href="{% url 'caronas:editar' carona.pk %}">Editar</a>{% endif %}
+          </div>
+          <div class="gestao">
+            {% if carona.pode_iniciar %}
+              <form method="post" action="{% url 'caronas:iniciar' carona.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="botao">Iniciar carona</button>
+              </form>
+            {% elif carona.status == 'em_andamento' %}
+              <form method="post" action="{% url 'caronas:concluir' carona.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="botao">Concluir carona</button>
+              </form>
+            {% endif %}
+            {% if carona.aberta %}<a class="cancelar-carona" href="{% url 'caronas:cancelar_carona' carona.pk %}">Cancelar carona</a>{% endif %}
           </div>
         </div>
 
+        {% if carona.aberta %}
         <h2>Solicitações pendentes</h2>
         {% if carona.pendentes %}
           <ul class="lista">
@@ -75,6 +90,7 @@
         {% else %}
           <p class="sem-pendentes">Nenhuma solicitação pendente. Você recebe uma notificação quando alguém pedir uma vaga.</p>
         {% endif %}
+        {% endif %}
       </section>
     {% empty %}
       <div class="vazio">
@@ -83,6 +99,23 @@
         <a class="botao" href="{% url 'caronas:oferecer' %}">+ Oferecer carona</a>
       </div>
     {% endfor %}
+
+    {% if historico %}
+      <section class="bloco" aria-labelledby="titulo-historico">
+        <h2 id="titulo-historico">Histórico</h2>
+        <ul class="lista">
+          {% for carona in historico %}
+            <li class="solicitada">
+              <div class="topo">
+                <strong>{{ carona.origem }} → {{ carona.destino }}</strong>
+                <span class="selo {{ carona.status }}">{{ carona.get_status_display }}</span>
+              </div>
+              <p>{{ carona.data_hora|date:'D, d M · H:i'|lower|capfirst }}{% if carona.motivo_cancelamento %} · {{ carona.motivo_cancelamento|truncatechars:60 }}{% endif %}</p>
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
 
   {% else %}
     {% if reservas %}

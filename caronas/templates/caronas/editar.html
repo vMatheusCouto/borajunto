@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Editar carona · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'caronas/css/oferecer/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<form method="post" class="tela" novalidate>
+  {% csrf_token %}
+  <div class="cabecalho">
+    <a class="voltar" href="{% url 'caronas:viagens' %}" aria-label="Voltar para Minhas viagens">
+      <img src="{% static 'contas/img/voltar.svg' %}" width="18" height="18" alt="">
+    </a>
+    <h1>Editar carona</h1>
+    <p>{{ carona.origem }} → {{ carona.destino }}</p>
+  </div>
+
+  <div class="formulario">
+    {% for erro in form.non_field_errors %}<p class="erro" role="alert">{{ erro }}</p>{% endfor %}
+    {% for campo in form %}
+      {% if campo.name == 'data' %}<div class="linha-dupla">{% endif %}
+      <div>
+        <div class="campo{% if campo.errors %} invalido{% endif %}">
+          <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+          {{ campo }}
+        </div>
+        {% for erro in campo.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
+      </div>
+      {% if campo.name == 'horario' %}</div>{% endif %}
+    {% endfor %}
+    <p class="nota">Se você mudar o horário ou algum local, os passageiros confirmados recebem um aviso.</p>
+  </div>
+
+  <div class="confirmar">
+    <button type="submit" class="botao">Salvar alterações</button>
+  </div>
+</form>
+{% endblock %}
