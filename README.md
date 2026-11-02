@@ -20,6 +20,18 @@ Fora do MVP: app móvel nativo, chat, localização em tempo real, pagamentos e 
 
 ![Diagrama de casos de uso](docs/diagrama-casos-de-uso.png)
 
+## Diagrama entidade-relacionamento
+
+![Diagrama entidade-relacionamento](docs/diagrama-er.png)
+
+Fonte em [`docs/diagrama-er.drawio`](docs/diagrama-er.drawio).
+
+## Modelo lógico
+
+![Modelo lógico do banco de dados](docs/modelo-logico.png)
+
+Fonte em [`docs/modelo-logico.drawio`](docs/modelo-logico.drawio).
+
 ## Como rodar
 
 Requer Python 3.14 e [uv](https://docs.astral.sh/uv/).
