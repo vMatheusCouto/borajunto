@@ -45,7 +45,6 @@ class SuapBackend(BaseBackend):
             usuario = User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
-        # Conta desativada no admin sai do app mesmo com a sessão aberta (RN23).
         return usuario if usuario.is_active else None
 
     @staticmethod
