@@ -22,10 +22,10 @@
       {% endif %}
     </div>
     <div class="acoes">
-      <span class="fantasma sino" role="img" aria-label="Notificações{% if notificacoes_nao_lidas %}: há notificações não lidas{% endif %}">
+      <a class="fantasma sino" href="{% url 'notificacoes:lista' %}" aria-label="Notificações{% if notificacoes_nao_lidas %}: há notificações não lidas{% endif %}">
         <img src="{% static 'contas/img/notificacoes.svg' %}" width="20" height="20" alt="">
         {% if notificacoes_nao_lidas %}<span class="ponto"></span>{% endif %}
-      </span>
+      </a>
       <form method="post" action="{% url 'contas:sair' %}">
         {% csrf_token %}
         <button type="submit" class="fantasma sair">Sair</button>
@@ -61,7 +61,7 @@
     </div>
     <ul class="lista">
       {% for carona in caronas %}
-        <li class="card">
+        <li><a class="card" href="{% url 'caronas:detalhe' carona.pk %}">
           <div class="trajeto">
             <div class="linha-tempo" aria-hidden="true"><span class="inicio"></span><span class="trilho"></span><span class="fim"></span></div>
             <div class="paradas">
@@ -82,7 +82,7 @@
             </span>
             <span class="vagas">{{ carona.vagas_restantes }} vaga{{ carona.vagas_restantes|pluralize }}</span>
           </div>
-        </li>
+        </a></li>
       {% endfor %}
     </ul>
   {% else %}

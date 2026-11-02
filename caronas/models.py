@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.db import models
 from django.db.models import Avg, Count, F, OuterRef, Q, Subquery
@@ -29,6 +31,9 @@ class CaronaQuerySet(models.QuerySet):
 
 
 class Carona(models.Model):
+    # O motorista pode marcar a saída a partir de 30 minutos antes do horário (RF08).
+    ANTECEDENCIA_INICIO = timedelta(minutes=30)
+
     class Status(models.TextChoices):
         PUBLICADA = 'publicada', 'Publicada'
         LOTADA = 'lotada', 'Lotada'
@@ -47,6 +52,7 @@ class Carona(models.Model):
     data_hora = models.DateTimeField()
     vagas = models.PositiveSmallIntegerField()
     observacoes = models.TextField(blank=True)
+    motivo_cancelamento = models.TextField(blank=True)
     status = models.CharField(
         max_length=12,
         choices=Status.choices,
@@ -61,6 +67,25 @@ class Carona(models.Model):
 
     def __str__(self):
         return f'{self.origem} → {self.destino} ({self.data_hora:%d/%m/%Y %H:%M})'
+
+    @property
+    def aberta(self):
+        """Publicada ou lotada: ainda não saiu, não terminou e não foi cancelada."""
+        return self.status in (self.Status.PUBLICADA, self.Status.LOTADA)
+
+    @property
+    def pode_iniciar(self):
+        return self.aberta and timezone.now() >= self.data_hora - self.ANTECEDENCIA_INICIO
+
+    def atualizar_lotacao(self):
+        """Alterna entre publicada e lotada conforme as vagas confirmadas (RF17)."""
+        if not self.aberta:
+            return
+        confirmadas = self.reservas.filter(status=Reserva.Status.ACEITA).count()
+        situacao = self.Status.LOTADA if confirmadas >= self.vagas else self.Status.PUBLICADA
+        if situacao != self.status:
+            self.status = situacao
+            self.save(update_fields=['status'])
 
 
 class Reserva(models.Model):
@@ -105,4 +130,10 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f'{self.passageiro} em {self.carona} ({self.get_status_display()})'
+
+    @property
+    def cancelavel(self):
+        """O passageiro pode desistir enquanto a carona não sai (RF18, RN12)."""
+        return (self.status in self.ATIVAS and self.carona.aberta
+                and self.carona.data_hora > timezone.now())
 
