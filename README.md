@@ -1,14 +1,16 @@
 # BoraJunto
 
-Aplicativo web de caronas estudantis, desenvolvido em Django como Projeto Integrador. Estudantes publicam e buscam caronas para a instituição, solicitam vagas, acompanham reservas e veem a rota no Google Maps.
+Aplicativo web de caronas estudantis, desenvolvido em Django como Projeto Integrador. Estudantes publicam e buscam caronas para a instituição, solicitam vagas e acompanham as reservas.
 
-**Equipe:** Almerinda, Kellyson, Klebeson e Matheus
+**Versão online:** https://borajunto.vercel.app
+
+**Equipe:** Almerinda, Kellyson, Klebeson e Matheus  
 **Orientador:** Prof. Thiago Henrique
 
 ## Escopo do MVP
 
 - Login institucional via SUAP
-- Publicação, edição e cancelamento de caronas, com rota, distância e duração pelo Google Maps
+- Publicação, edição e cancelamento de caronas
 - Busca por origem, destino e data, e reservas que o motorista aceita ou recusa
 - Notificações internas, lembrete 60 minutos antes da carona e histórico
 - Avaliação por estrelas a cada carona concluída, com reputação calculada pela média das avaliações
@@ -19,6 +21,12 @@ Fora do MVP: app móvel nativo, chat, localização em tempo real, pagamentos e 
 ## Casos de uso
 
 ![Diagrama de casos de uso](docs/diagrama-casos-de-uso.png)
+
+## Modelo lógico
+
+![Modelo lógico do banco de dados](docs/modelo-logico.png)
+
+Fonte em [`docs/modelo-logico.mmd`](docs/modelo-logico.mmd) (Mermaid). Para regerar após mudar os models: `curl -H "Content-Type: text/plain" --data-binary @docs/modelo-logico.mmd https://kroki.io/mermaid/png -o docs/modelo-logico.png`.
 
 ## Como rodar
 

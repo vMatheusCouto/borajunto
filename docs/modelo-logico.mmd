@@ -1,0 +1,135 @@
+---
+title: Modelo Lógico — BoraJunto
+config:
+  layout: elk
+  theme: base
+  themeVariables:
+    fontFamily: "Helvetica, Arial, sans-serif"
+    fontSize: "15px"
+    primaryColor: "#EEF3FF"
+    primaryTextColor: "#0B1640"
+    primaryBorderColor: "#1D5BFF"
+    lineColor: "#0B1640"
+    tertiaryColor: "#FFFFFF"
+    attributeBackgroundColorOdd: "#FFFFFF"
+    attributeBackgroundColorEven: "#F4F7FF"
+    titleColor: "#0B1640"
+  er:
+    entityPadding: 18
+---
+erDiagram
+    %% Usuários
+    auth_user ||--o| contas_perfil : "possui"
+
+    %% Caronas
+    auth_user ||--o{ caronas_carona : "oferece"
+    auth_user ||--o{ caronas_reserva : "solicita"
+    caronas_carona ||--o{ caronas_reserva : "tem"
+    caronas_carona ||--o{ avaliacoes_avaliacao : "gera"
+    auth_user ||--o{ avaliacoes_avaliacao : "avalia / é avaliado"
+    caronas_carona |o--o{ notificacoes_notificacao : "refere-se"
+    auth_user ||--o{ notificacoes_notificacao : "recebe"
+
+    %% Moderação
+    auth_user ||--o{ denuncias_denuncia : "denuncia / é alvo"
+    caronas_carona |o--o{ denuncias_denuncia : "é alvo"
+    avaliacoes_avaliacao |o--o{ denuncias_denuncia : "é alvo"
+    denuncias_denuncia ||--o{ denuncias_decisaomoderacao : "recebe"
+    auth_user ||--o{ denuncias_decisaomoderacao : "decide"
+
+    auth_user["auth_user (Usuário)"] {
+        integer id PK
+        varchar username UK
+        varchar password
+        varchar first_name
+        varchar last_name
+        varchar email
+        bool is_active
+        bool is_staff
+        bool is_superuser
+        datetime last_login "nulo"
+        datetime date_joined
+    }
+
+    contas_perfil["contas_perfil (Perfil)"] {
+        integer id PK
+        integer usuario_id FK, UK
+        varchar matricula UK
+        varchar curso
+        varchar campus
+        varchar foto_url
+        datetime atualizado_em
+    }
+
+    caronas_carona["caronas_carona (Carona)"] {
+        integer id PK
+        integer motorista_id FK
+        varchar origem
+        varchar destino
+        varchar ponto_encontro
+        datetime data_hora
+        smallint vagas "≥ 0"
+        text observacoes
+        text motivo_cancelamento
+        varchar status "publicada · lotada · em_andamento · concluida · cancelada"
+        datetime criada_em
+    }
+
+    caronas_reserva["caronas_reserva (Reserva)"] {
+        integer id PK
+        bigint carona_id FK
+        integer passageiro_id FK
+        varchar status "pendente · aceita · recusada · cancelada"
+        datetime criada_em
+        datetime atualizada_em
+    }
+
+    avaliacoes_avaliacao["avaliacoes_avaliacao (Avaliação)"] {
+        integer id PK
+        bigint carona_id FK
+        integer avaliador_id FK "≠ avaliado_id"
+        integer avaliado_id FK
+        smallint nota "1 a 5"
+        bool removida
+        datetime criada_em
+        datetime atualizada_em
+    }
+
+    notificacoes_notificacao["notificacoes_notificacao (Notificação)"] {
+        integer id PK
+        integer destinatario_id FK
+        bigint carona_id FK "nulo"
+        varchar tipo "solicitacao · decisao · alteracao · cancelamento · lembrete"
+        varchar mensagem
+        bool lida
+        datetime criada_em
+    }
+
+    denuncias_denuncia["denuncias_denuncia (Denúncia)"] {
+        integer id PK
+        integer denunciante_id FK
+        integer usuario_id FK "nulo · alvo"
+        bigint carona_id FK "nulo · alvo"
+        bigint avaliacao_id FK "nulo · alvo"
+        varchar motivo "conduta · ausencia · informacao_falsa · seguranca · outro"
+        text descricao
+        varchar status "pendente · procedente · improcedente"
+        datetime criada_em
+    }
+
+    denuncias_decisaomoderacao["denuncias_decisaomoderacao (Decisão)"] {
+        integer id PK
+        bigint denuncia_id FK
+        integer administrador_id FK
+        varchar resultado "procedente · improcedente"
+        varchar acao "nenhuma · ocultar_conteudo · restringir_conta"
+        text justificativa "obrigatória"
+        datetime decidida_em
+    }
+
+    classDef usuario fill:#E3E7F3,stroke:#0B1640,stroke-width:2px
+    classDef carona fill:#EEF3FF,stroke:#1D5BFF,stroke-width:2px
+    classDef moderacao fill:#FFF1EA,stroke:#FF6A2B,stroke-width:2px
+    class auth_user,contas_perfil usuario
+    class caronas_carona,caronas_reserva,avaliacoes_avaliacao,notificacoes_notificacao carona
+    class denuncias_denuncia,denuncias_decisaomoderacao moderacao
