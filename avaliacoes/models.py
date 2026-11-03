@@ -8,14 +8,11 @@ class AvaliacaoQuerySet(models.QuerySet):
         return self.filter(removida=False)
 
     def reputacao(self, usuario):
-        """Média e quantidade das avaliações válidas recebidas (RF25, RN21)."""
         return self.validas().filter(avaliado=usuario).aggregate(
             media=Avg('nota'), quantidade=Count('id'))
 
 
 class Avaliacao(models.Model):
-    """Nota de um participante a outro em uma carona concluída (RF24, RN19-RN20)."""
-
     carona = models.ForeignKey(
         'caronas.Carona',
         on_delete=models.CASCADE,
@@ -32,7 +29,6 @@ class Avaliacao(models.Model):
         related_name='avaliacoes_recebidas',
     )
     nota = models.PositiveSmallIntegerField()
-    # Avaliações removidas pela moderação saem da reputação (RN21).
     removida = models.BooleanField(default=False)
     criada_em = models.DateTimeField(auto_now_add=True)
     atualizada_em = models.DateTimeField(auto_now=True)
@@ -44,7 +40,6 @@ class Avaliacao(models.Model):
         verbose_name = 'avaliação'
         verbose_name_plural = 'avaliações'
         constraints = [
-            # Na mesma carona, a nova nota substitui a anterior (RN20).
             models.UniqueConstraint(
                 fields=['carona', 'avaliador', 'avaliado'],
                 name='avaliacao_unica_por_carona',
@@ -53,7 +48,7 @@ class Avaliacao(models.Model):
                 condition=models.Q(nota__gte=1, nota__lte=5),
                 name='avaliacao_nota_de_1_a_5',
             ),
-            models.CheckConstraint(  # RN19
+            models.CheckConstraint(
                 condition=~models.Q(avaliador=models.F('avaliado')),
                 name='avaliacao_sem_autoavaliacao',
             ),

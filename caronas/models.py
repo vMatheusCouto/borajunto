@@ -8,7 +8,6 @@ from django.utils import timezone
 
 class CaronaQuerySet(models.QuerySet):
     def disponiveis(self):
-        """Caronas publicadas, futuras e com vaga, que aceitam solicitações (RN07)."""
         return (self.com_vagas_restantes()
                 .filter(status=Carona.Status.PUBLICADA, data_hora__gt=timezone.now(),
                         vagas_restantes__gt=0))
@@ -18,7 +17,6 @@ class CaronaQuerySet(models.QuerySet):
         return self.annotate(vagas_restantes=F('vagas') - confirmadas)
 
     def com_reputacao_do_motorista(self):
-        """Média e quantidade das avaliações válidas do motorista (RF14, RN21)."""
         from avaliacoes.models import Avaliacao
 
         recebidas = (Avaliacao.objects.validas()
@@ -31,7 +29,6 @@ class CaronaQuerySet(models.QuerySet):
 
 
 class Carona(models.Model):
-    # O motorista pode marcar a saída a partir de 30 minutos antes do horário (RF08).
     ANTECEDENCIA_INICIO = timedelta(minutes=30)
 
     class Status(models.TextChoices):
@@ -70,7 +67,6 @@ class Carona(models.Model):
 
     @property
     def aberta(self):
-        """Publicada ou lotada: ainda não saiu, não terminou e não foi cancelada."""
         return self.status in (self.Status.PUBLICADA, self.Status.LOTADA)
 
     @property
@@ -78,7 +74,6 @@ class Carona(models.Model):
         return self.aberta and timezone.now() >= self.data_hora - self.ANTECEDENCIA_INICIO
 
     def atualizar_lotacao(self):
-        """Alterna entre publicada e lotada conforme as vagas confirmadas (RF17)."""
         if not self.aberta:
             return
         confirmadas = self.reservas.filter(status=Reserva.Status.ACEITA).count()
@@ -89,8 +84,6 @@ class Carona(models.Model):
 
 
 class Reserva(models.Model):
-    """Pedido de vaga de um passageiro; vira reserva confirmada quando aceito (RN08)."""
-
     class Status(models.TextChoices):
         PENDENTE = 'pendente', 'Pendente'
         ACEITA = 'aceita', 'Aceita'
@@ -120,7 +113,6 @@ class Reserva(models.Model):
     class Meta:
         ordering = ['criada_em']
         constraints = [
-            # No máximo uma solicitação ou reserva ativa por carona (RN10).
             models.UniqueConstraint(
                 fields=['carona', 'passageiro'],
                 condition=models.Q(status__in=['pendente', 'aceita']),
@@ -133,7 +125,6 @@ class Reserva(models.Model):
 
     @property
     def cancelavel(self):
-        """O passageiro pode desistir enquanto a carona não sai (RF18, RN12)."""
         return (self.status in self.ATIVAS and self.carona.aberta
                 and self.carona.data_hora > timezone.now())
 

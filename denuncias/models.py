@@ -3,8 +3,6 @@ from django.db import models
 
 
 class Denuncia(models.Model):
-    """Relato de um estudante sobre um usuário, uma carona ou uma avaliação (RF26)."""
-
     class Motivo(models.TextChoices):
         CONDUTA = 'conduta', 'Conduta inadequada'
         AUSENCIA = 'ausencia', 'Não compareceu'
@@ -22,7 +20,6 @@ class Denuncia(models.Model):
         on_delete=models.CASCADE,
         related_name='denuncias_feitas',
     )
-    # Exatamente um alvo; PROTECT preserva o registro para a moderação.
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
@@ -77,8 +74,6 @@ class Denuncia(models.Model):
 
 
 class DecisaoModeracao(models.Model):
-    """Registro de auditoria de cada decisão tomada sobre uma denúncia (RF27, RN22, RNF12)."""
-
     class Acao(models.TextChoices):
         NENHUMA = 'nenhuma', 'Nenhuma ação'
         OCULTAR_CONTEUDO = 'ocultar_conteudo', 'Ocultar conteúdo'
@@ -107,7 +102,7 @@ class DecisaoModeracao(models.Model):
         verbose_name = 'decisão de moderação'
         verbose_name_plural = 'decisões de moderação'
         constraints = [
-            models.CheckConstraint(  # RN22
+            models.CheckConstraint(
                 condition=~models.Q(justificativa=''),
                 name='decisao_com_justificativa',
             ),

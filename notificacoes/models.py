@@ -3,8 +3,6 @@ from django.db import models
 
 
 class Notificacao(models.Model):
-    """Aviso interno sobre solicitações, decisões, alterações e lembretes (RF21, RF22)."""
-
     class Tipo(models.TextChoices):
         SOLICITACAO = 'solicitacao', 'Nova solicitação'
         DECISAO = 'decisao', 'Decisão do motorista'
@@ -17,7 +15,6 @@ class Notificacao(models.Model):
         on_delete=models.CASCADE,
         related_name='notificacoes',
     )
-    # A mensagem continua na central mesmo se a carona deixar de existir (UC07 E1).
     carona = models.ForeignKey(
         'caronas.Carona',
         on_delete=models.SET_NULL,
@@ -35,7 +32,6 @@ class Notificacao(models.Model):
         verbose_name = 'notificação'
         verbose_name_plural = 'notificações'
         constraints = [
-            # Um único lembrete de 60 minutos por pessoa e carona (RF22, RN16).
             models.UniqueConstraint(
                 fields=['destinatario', 'carona'],
                 condition=models.Q(tipo='lembrete'),

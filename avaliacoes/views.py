@@ -12,7 +12,6 @@ NOTAS = range(1, 6)
 
 
 def participantes(carona):
-    """Motorista e passageiros confirmados de uma carona (RN19)."""
     passageiros = [r.passageiro for r in carona.reservas.filter(
         status=Reserva.Status.ACEITA).select_related('passageiro__perfil')]
     return [carona.motorista, *passageiros]
@@ -20,13 +19,12 @@ def participantes(carona):
 
 @login_required
 def avaliar(request, pk):
-    """Notas de 1 a 5 estrelas aos demais participantes de uma carona concluída (RF24)."""
     carona = get_object_or_404(Carona.objects.select_related('motorista'), pk=pk,
                                status=Carona.Status.CONCLUIDA)
     pessoas = participantes(carona)
     if request.user not in pessoas:
         raise Http404
-    avaliados = [p for p in pessoas if p != request.user]  # ninguém avalia a si próprio
+    avaliados = [p for p in pessoas if p != request.user]
     anteriores = dict(Avaliacao.objects.filter(carona=carona, avaliador=request.user)
                       .values_list('avaliado_id', 'nota'))
 
@@ -35,7 +33,6 @@ def avaliar(request, pk):
         for pessoa in avaliados:
             nota = request.POST.get(f'nota_{pessoa.pk}', '')
             if nota.isdigit() and int(nota) in NOTAS:
-                # Na mesma carona, a nova nota substitui a anterior (RN20).
                 Avaliacao.objects.update_or_create(
                     carona=carona, avaliador=request.user, avaliado=pessoa,
                     defaults={'nota': int(nota)})

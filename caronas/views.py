@@ -44,7 +44,7 @@ def oferecer_vagas(request):
         form = VagasForm(request.POST)
         data_hora = timezone.make_aware(
             datetime.strptime(trajeto['data'] + ' ' + trajeto['horario'], '%Y-%m-%d %H:%M'))
-        if data_hora <= timezone.now():  # RN05: o horário pode ter passado durante o passo 2
+        if data_hora <= timezone.now():
             messages.error(request, 'O horário da carona já passou. Escolha um novo horário.')
             return redirect('caronas:oferecer')
         if form.is_valid():
@@ -67,7 +67,6 @@ def oferecer_vagas(request):
 
 @login_required
 def detalhe(request, pk):
-    """Detalhes da carona com a opção de solicitar ou cancelar a vaga (RF14, UC05)."""
     carona = get_object_or_404(
         Carona.objects.com_vagas_restantes().com_reputacao_do_motorista()
         .select_related('motorista__perfil'),
@@ -90,13 +89,11 @@ def detalhe(request, pk):
 
 @login_required
 def solicitar(request, pk):
-    """Registra a solicitação de vaga como pendente e avisa o motorista (UC05)."""
     detalhe_url = reverse('caronas:detalhe', args=[pk])
     if request.method != 'POST':
         return redirect(detalhe_url)
 
     with transaction.atomic():
-        # Trava a carona para que duas solicitações não disputem a última vaga (UC05 E1).
         carona = get_object_or_404(Carona.objects.select_for_update(), pk=pk)
         saida = carona.data_hora
         proximas = Reserva.objects.filter(
@@ -130,7 +127,6 @@ def solicitar(request, pk):
 
 @login_required
 def cancelar(request, pk):
-    """Cancela uma solicitação pendente ou uma reserva confirmada (UC05 A1, A2)."""
     reserva = get_object_or_404(Reserva, pk=pk, passageiro=request.user)
     if request.method != 'POST':
         return redirect(reverse('caronas:viagens') + '?aba=solicitei')
@@ -144,7 +140,6 @@ def cancelar(request, pk):
             confirmada = reserva.status == Reserva.Status.ACEITA
             reserva.status = Reserva.Status.CANCELADA
             reserva.save()
-            # A vaga devolvida reabre a carona para novas solicitações (RN12).
             carona.atualizar_lotacao()
             nome = request.user.get_full_name() or request.user.username
             Notificacao.objects.create(
@@ -183,13 +178,11 @@ def viagens(request):
 
 @login_required
 def aceitar(request, pk):
-    """Confirma a vaga do passageiro sem passar do limite de vagas (RF16, RN11, RNF08)."""
     reserva = get_object_or_404(Reserva, pk=pk, carona__motorista=request.user)
     if request.method != 'POST':
         return redirect('caronas:viagens')
 
     with transaction.atomic():
-        # Trava a carona para que dois aceites não ocupem a mesma última vaga.
         carona = Carona.objects.select_for_update().get(pk=reserva.carona_id)
         reserva.refresh_from_db()
         confirmadas = carona.reservas.filter(status=Reserva.Status.ACEITA).count()
@@ -209,7 +202,6 @@ def aceitar(request, pk):
                 tipo='decisao',
                 mensagem=f'Sua vaga em {carona.origem} → {carona.destino} foi confirmada.',
             )
-            # Reserva confirmada a menos de 60 minutos da saída já recebe o lembrete (RN16).
             if perto_do_horario(carona):
                 lembrar(carona)
             messages.success(request, 'Vaga confirmada.')
@@ -241,7 +233,6 @@ def recusar(request, pk):
 
 
 def notificar_passageiros(carona, tipo, mensagem, status=(Reserva.Status.ACEITA,)):
-    """Cria uma notificação para cada passageiro da carona nas situações indicadas."""
     passageiros = carona.reservas.filter(status__in=status).values_list('passageiro', flat=True)
     Notificacao.objects.bulk_create(
         Notificacao(destinatario_id=passageiro, carona=carona, tipo=tipo, mensagem=mensagem)
@@ -250,15 +241,13 @@ def notificar_passageiros(carona, tipo, mensagem, status=(Reserva.Status.ACEITA,
 
 
 def carona_do_motorista(request, pk):
-    """Só o motorista autor gerencia a carona (RN04); para os demais, 404."""
     return get_object_or_404(Carona.objects.select_for_update(), pk=pk, motorista=request.user)
 
 
 @login_required
 def editar(request, pk):
-    """Altera uma carona ainda não iniciada e avisa os confirmados (RF06, RN13, RN14)."""
     carona = get_object_or_404(Carona, pk=pk, motorista=request.user)
-    if not carona.aberta:  # UC06 E3
+    if not carona.aberta:
         messages.error(request, 'Essa carona não pode mais ser editada.')
         return redirect('caronas:viagens')
 
@@ -294,7 +283,6 @@ def editar(request, pk):
             carona.observacoes = dados['observacoes']
             carona.save()
             carona.atualizar_lotacao()
-            # Só mudanças de horário ou de local geram aviso (UC06 A1).
             if relevante:
                 notificar_passageiros(
                     carona, Notificacao.Tipo.ALTERACAO,
@@ -306,7 +294,6 @@ def editar(request, pk):
 
 @login_required
 def cancelar_carona(request, pk):
-    """Cancela a carona com motivo, encerra as reservas e avisa os passageiros (RF07)."""
     carona = get_object_or_404(Carona, pk=pk, motorista=request.user)
     if not carona.aberta:
         messages.error(request, 'Essa carona não pode mais ser cancelada.')
@@ -333,12 +320,11 @@ def cancelar_carona(request, pk):
 
 @login_required
 def iniciar(request, pk):
-    """Marca a saída da carona; pedidos ainda pendentes são recusados (RF08, RN15)."""
     if request.method != 'POST':
         return redirect('caronas:viagens')
     with transaction.atomic():
         carona = carona_do_motorista(request, pk)
-        if not carona.pode_iniciar:  # UC06 E2
+        if not carona.pode_iniciar:
             messages.error(request, 'A carona só pode ser iniciada perto do horário de saída.')
         else:
             notificar_passageiros(
@@ -354,7 +340,6 @@ def iniciar(request, pk):
 
 @login_required
 def concluir(request, pk):
-    """Encerra a carona em andamento e libera as avaliações (RF08, RF24)."""
     if request.method != 'POST':
         return redirect('caronas:viagens')
     with transaction.atomic():

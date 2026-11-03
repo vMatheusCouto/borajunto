@@ -43,7 +43,6 @@ self.addEventListener("activate", function (event) {
 self.addEventListener("fetch", function (event) {
     var request = event.request;
     var url = new URL(request.url);
-    // POSTs
     if (request.method !== "GET" || url.origin !== location.origin) {
         return;
     }

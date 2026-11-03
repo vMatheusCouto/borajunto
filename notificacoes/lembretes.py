@@ -8,7 +8,6 @@ ANTECEDENCIA = timedelta(minutes=60)
 
 
 def lembrar(carona):
-    """Lembrete para o motorista e os passageiros confirmados, uma vez por pessoa (RF22)."""
     from caronas.models import Reserva
 
     pessoas = [carona.motorista_id, *carona.reservas.filter(
@@ -29,7 +28,6 @@ def perto_do_horario(carona, agora=None):
 
 
 def enviar_lembretes(agora=None):
-    """Gera os lembretes das caronas que saem nos próximos 60 minutos."""
     from caronas.models import Carona
 
     agora = agora or timezone.now()

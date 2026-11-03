@@ -3,8 +3,6 @@ from django.db import models
 
 
 class Perfil(models.Model):
-    """Dados institucionais importados do SUAP a cada login (RF02, RN02)."""
-
     usuario = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

@@ -5,8 +5,6 @@ from django.utils import timezone
 
 
 class BuscaForm(forms.Form):
-    """Filtros da busca de caronas por origem, destino e data (RF13)."""
-
     origem = forms.CharField(label='Origem', max_length=255, required=False)
     destino = forms.CharField(label='Destino', max_length=255, required=False)
     data = forms.DateField(label='Data', required=False,
@@ -52,8 +50,6 @@ class VagasForm(forms.Form):
 
 
 class EditarCaronaForm(TrajetoForm):
-    """Alteração de uma carona publicada e ainda não iniciada (RF06)."""
-
     vagas = forms.IntegerField(label='Vagas', min_value=1, max_value=6)
     observacoes = forms.CharField(label='Observações', max_length=500, required=False,
                                   widget=forms.Textarea(attrs={'rows': 3}))
@@ -64,7 +60,7 @@ class EditarCaronaForm(TrajetoForm):
 
     def clean_vagas(self):
         vagas = self.cleaned_data['vagas']
-        if vagas < self.confirmadas:  # RN13
+        if vagas < self.confirmadas:
             raise forms.ValidationError(
                 f'Já há {self.confirmadas} passageiro(s) confirmado(s); as vagas não podem ficar abaixo disso.')
         return vagas

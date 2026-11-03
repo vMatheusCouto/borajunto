@@ -26,10 +26,9 @@ def saudacao(agora):
 
 @login_required
 def inicio(request):
-    """Tela inicial: dados do perfil, busca e lista das caronas disponíveis (UC04)."""
     busca = BuscaForm(request.GET or None)
     caronas = (Carona.objects.disponiveis()
-               .exclude(motorista=request.user)  # RN09
+               .exclude(motorista=request.user)
                .com_reputacao_do_motorista()
                .select_related('motorista'))
     if busca.is_bound and busca.is_valid():

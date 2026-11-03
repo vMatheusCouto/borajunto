@@ -15,13 +15,6 @@ ERRO_SUAP = 'Não foi possível falar com o SUAP agora. Tente novamente em algun
 
 
 class SuapBackend(BaseBackend):
-    """Autentica pela matrícula e senha do SUAP (RF01).
-
-    A senha só é repassada ao SUAP pelo suapy; o BoraJunto não a guarda.
-    Quando o login falha por um motivo que a pessoa precisa saber, a
-    mensagem fica em ``request.erro_suap`` para o formulário exibir.
-    """
-
     def authenticate(self, request, username=None, password=None, **kwargs):
         if not username or not password:
             return None
@@ -34,7 +27,7 @@ class SuapBackend(BaseBackend):
             logger.warning('Falha ao acessar o SUAP durante o login.', exc_info=True)
             self._registrar_erro(request, ERRO_SUAP)
             return None
-        if not perfil_suap.aluno_ativo:  # RN01
+        if not perfil_suap.aluno_ativo:
             self._registrar_erro(request, ERRO_VINCULO)
             return None
         return self._sincronizar(perfil_suap)
@@ -55,7 +48,6 @@ class SuapBackend(BaseBackend):
     @staticmethod
     @transaction.atomic
     def _sincronizar(perfil_suap):
-        """Cria ou atualiza usuário e perfil com os dados do SUAP (RF02)."""
         User = get_user_model()
         user, criado = User.objects.get_or_create(username=perfil_suap.matricula)
         if criado:
