@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static icones %}
 
 {% block titulo %}Minhas viagens · BoraJunto{% endblock %}
 
@@ -37,7 +37,7 @@
                 <li><img src="{% static 'contas/img/vaga.svg' %}" width="16" height="16" alt="Vaga livre"></li>
               {% endfor %}
             </ul>
-            <a class="editar" aria-disabled="true">Editar</a>
+            <a class="editar" aria-disabled="true">{% icone 'editar' 14 %}Editar</a>
           </div>
         </div>
 
@@ -57,11 +57,11 @@
                   <div class="opcoes">
                     <form method="post" action="{% url 'caronas:recusar' reserva.pk %}">
                       {% csrf_token %}
-                      <button type="submit" class="botao contorno"><span>Recusar</span></button>
+                      <button type="submit" class="botao contorno">{% icone 'fechar' 16 %}<span>Recusar</span></button>
                     </form>
                     <form method="post" action="{% url 'caronas:aceitar' reserva.pk %}">
                       {% csrf_token %}
-                      <button type="submit" class="botao">Aceitar</button>
+                      <button type="submit" class="botao">{% icone 'confirmar' 16 %}Aceitar</button>
                     </form>
                   </div>
                 </li>
@@ -76,7 +76,7 @@
       <div class="vazio">
         <h2>Você não tem caronas ativas</h2>
         <p>Ofereça uma carona e as solicitações dos passageiros aparecem aqui.</p>
-        <a class="botao" href="{% url 'caronas:oferecer' %}">+ Oferecer carona</a>
+        <a class="botao" href="{% url 'caronas:oferecer' %}">{% icone 'mais' %}Oferecer carona</a>
       </div>
     {% endfor %}
 
@@ -88,13 +88,13 @@
             <li class="solicitada">
               <div class="topo">
                 <strong>{{ carona.origem }} → {{ carona.destino }}</strong>
-                <span class="selo {{ reserva.status }}">{% if reserva.status == 'aceita' %}Confirmada{% else %}{{ reserva.get_status_display }}{% endif %}</span>
+                <span class="selo {{ reserva.status }}">{% if reserva.status == 'aceita' %}{% icone 'confirmado' 12 %}{% elif reserva.status == 'pendente' %}{% icone 'relogio' 12 %}{% elif reserva.status == 'recusada' %}{% icone 'fechar' 12 %}{% endif %}{% if reserva.status == 'aceita' %}Confirmada{% else %}{{ reserva.get_status_display }}{% endif %}</span>
               </div>
               <p>{{ carona.data_hora|date:'D, d M · H:i'|lower|capfirst }} · {{ carona.motorista.get_full_name|default:carona.motorista.username }}</p>
               {% if reserva.status in 'pendente aceita' and carona.status != 'concluida' and carona.status != 'cancelada' %}
                 <form method="post" action="{% url 'caronas:cancelar' reserva.pk %}">
                   {% csrf_token %}
-                  <button type="submit" class="botao cancelar">{% if reserva.status == 'aceita' %}Cancelar reserva{% else %}Cancelar solicitação{% endif %}</button>
+                  <button type="submit" class="botao cancelar">{% icone 'fechar' 16 %}{% if reserva.status == 'aceita' %}Cancelar reserva{% else %}Cancelar solicitação{% endif %}</button>
                 </form>
               {% endif %}
             </li>
@@ -105,7 +105,7 @@
       <div class="vazio">
         <h2>Nenhuma vaga solicitada</h2>
         <p>Quando você pedir uma vaga em uma carona, ela aparece aqui com a situação do pedido.</p>
-        <a class="botao" href="{% url 'contas:inicio' %}">Buscar caronas</a>
+        <a class="botao" href="{% url 'contas:inicio' %}">{% icone 'busca' %}Buscar caronas</a>
       </div>
     {% endif %}
   {% endif %}

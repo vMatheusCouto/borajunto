@@ -4,6 +4,7 @@
     --superficie: #f7f6fb; --tinta: #131228; --linha: rgba(19, 18, 40, 0.07);
     --fonte-titulo: 'Space Grotesk', system-ui, sans-serif;
     --fonte-texto: 'DM Sans', system-ui, sans-serif;
+    --icone-gap: 8px;
   }
   html body { background: var(--primaria); color: #fff; font-family: var(--fonte-texto); }
   body > main { max-width: 480px; min-height: 100vh; padding: 72px 28px 32px; display: flex; flex-direction: column; gap: 17px; }
@@ -27,13 +28,16 @@
   .erro { margin: 0; color: var(--acento); font-size: 13px; }
   .aviso { margin: 0; font-size: 12px; line-height: 18px; text-align: center; opacity: 0.6; }
 
-  .botao { display: flex; align-items: center; justify-content: center; gap: 10px; height: 56px; padding: 0 28px; border: 0; border-radius: 28px; background: var(--primaria); color: #fff; font: 700 16px var(--fonte-titulo); transition: transform 0.15s, filter 0.2s; }
+  .botao { display: flex; align-items: center; justify-content: center; gap: var(--icone-gap); height: 56px; padding: 0 28px; border: 0; border-radius: 28px; background: var(--primaria); color: #fff; font: 700 16px var(--fonte-titulo); transition: transform 0.15s, filter 0.2s; }
   .botao:hover { filter: brightness(1.08); }
   .botao:active { transform: scale(0.98); }
   .cartao .botao:focus-visible { outline-color: var(--primaria); }
   .giro { display: none; width: 18px; height: 18px; border: 2px solid rgba(255, 255, 255, 0.35); border-top-color: #fff; border-radius: 50%; animation: girar 0.8s linear infinite; }
   .enviando .botao { cursor: progress; filter: none; transform: none; }
   .enviando .giro { display: block; }
+  .enviando .botao .ic { display: none; }
+  .ic { flex: none; stroke-width: 2px; }
+  .ic * { vector-effect: non-scaling-stroke; }
 
   .rodape { margin: 0; font-size: 12px; line-height: 18px; text-align: center; opacity: 0.6; }
 

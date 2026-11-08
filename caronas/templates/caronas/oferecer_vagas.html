@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static icones %}
 
 {% block titulo %}Oferecer carona · BoraJunto{% endblock %}
 
@@ -26,9 +26,9 @@
     <div class="campo vagas{% if form.vagas.errors %} invalido{% endif %}">
       <h2><label for="{{ form.vagas.id_for_label }}">{{ form.vagas.label }}</label></h2>
       <div class="contador">
-        <button type="button" class="menos" aria-label="Uma vaga a menos">−</button>
+        <button type="button" class="menos" aria-label="Uma vaga a menos">{% icone 'menos' 22 %}</button>
         {{ form.vagas }}
-        <button type="button" class="mais" aria-label="Uma vaga a mais">+</button>
+        <button type="button" class="mais" aria-label="Uma vaga a mais">{% icone 'mais' 22 %}</button>
       </div>
     </div>
     {% for erro in form.vagas.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
@@ -43,7 +43,7 @@
   </div>
 
   <div class="confirmar">
-    <button type="submit" class="botao">Publicar carona</button>
+    <button type="submit" class="botao">{% icone 'enviar' %}Publicar carona</button>
   </div>
 </form>
 

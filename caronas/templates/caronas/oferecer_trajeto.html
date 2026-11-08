@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static icones %}
 
 {% block titulo %}Oferecer carona · BoraJunto{% endblock %}
 
@@ -38,7 +38,7 @@
   </div>
 
   <div class="confirmar">
-    <button type="submit" class="botao">Continuar</button>
+    <button type="submit" class="botao">Continuar{% icone 'seta-direita' %}</button>
   </div>
 </form>
 {% endblock %}

@@ -4,15 +4,18 @@
     --superficie: #f7f6fb; --tinta: #131228; --linha: rgba(19, 18, 40, 0.07); --borda: rgba(19, 18, 40, 0.14);
     --avatar: #cbd6f5; --alerta: #ffce3d; --fonte-titulo: 'Space Grotesk', system-ui, sans-serif;
     --fonte-texto: 'DM Sans', system-ui, sans-serif;
+    --icone-gap: 8px; --icone-gap-selo: 5px;
   }
   html body { background: var(--superficie); color: var(--tinta); font-family: var(--fonte-texto); }
   body > main { max-width: 480px; padding: 0; }
 
-  .botao { display: flex; align-items: center; justify-content: center; height: 50px; padding: 0 24px; border: 0; border-radius: 25px; background: var(--primaria); color: #fff; font: 700 15px var(--fonte-titulo); text-decoration: none; transition: transform 0.15s, filter 0.2s; }
+  .botao { display: flex; align-items: center; justify-content: center; gap: var(--icone-gap); height: 50px; padding: 0 24px; border: 0; border-radius: 25px; background: var(--primaria); color: #fff; font: 700 15px var(--fonte-titulo); text-decoration: none; transition: transform 0.15s, filter 0.2s; }
   .botao:hover { filter: brightness(1.08); }
   .botao:active { transform: scale(0.98); }
   .botao.contorno { background: none; border: 1px solid var(--borda); color: var(--tinta); }
-  .botao.contorno span { opacity: 0.6; }
+  .botao.contorno span, .botao.contorno .ic { opacity: 0.6; }
+  .ic { flex: none; vertical-align: middle; stroke-width: 2px; }
+  .ic * { vector-effect: non-scaling-stroke; }
   .botao[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
 
   .avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 15px; background: var(--avatar); color: var(--primaria-escura); font: 700 11px var(--fonte-titulo); flex: none; }
