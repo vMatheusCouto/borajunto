@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static icones %}
 
 {% block titulo %}Início · BoraJunto{% endblock %}
 
@@ -28,7 +28,7 @@
       </a>
       <form method="post" action="{% url 'contas:sair' %}">
         {% csrf_token %}
-        <button type="submit" class="fantasma sair">Sair</button>
+        <button type="submit" class="fantasma sair">{% icone 'sair' 16 %}Sair</button>
       </form>
     </div>
   </div>
@@ -47,17 +47,16 @@
       <label><span>{{ busca.data.label }}</span>{{ busca.data }}</label>
       <label><span>{{ busca.hora.label }}</span>{{ busca.hora }}</label>
     </div>
-    <button type="submit" class="botao">Buscar caronas</button>
+    <button type="submit" class="botao">{% icone 'busca' %}Buscar caronas</button>
   </form>
 </section>
 
 <section class="principal" aria-labelledby="titulo-lista">
-  <a class="botao" href="{% url 'caronas:oferecer' %}">+ Oferecer carona</a>
+  <a class="botao" href="{% url 'caronas:oferecer' %}">{% icone 'mais' %}Oferecer carona</a>
 
   {% if caronas %}
     <div class="titulo-lista">
       <h2 id="titulo-lista">{{ caronas|length }} carona{{ caronas|length|pluralize }} encontrada{{ caronas|length|pluralize }}</h2>
-      <a href="{% url 'caronas:oferecer' %}">+ Oferecer</a>
     </div>
     <ul class="lista">
       {% for carona in caronas %}
@@ -80,7 +79,7 @@
               {{ carona.motorista.get_full_name  |default:carona.motorista.username }}
               <span class="nota">{% if carona.reputacao_quantidade %}★ {{ carona.reputacao_media|floatformat:1 }}{% else %}Sem avaliações{% endif %}</span>
             </span>
-            <span class="vagas">{{ carona.vagas_restantes }} vaga{{ carona.vagas_restantes|pluralize }}</span>
+            <span class="vagas">{% icone 'pessoa' 14 %}{{ carona.vagas_restantes }} vaga{{ carona.vagas_restantes|pluralize }}</span>
           </div>
         </a></li>
       {% endfor %}
@@ -91,7 +90,7 @@
       <h2 id="titulo-lista">Nenhuma carona encontrada</h2>
       {% if filtrada %}
         <p>Não há caronas disponíveis com esses filtros. Tente outra data ou outro trajeto.</p>
-        <a class="botao contorno" href="{% url 'contas:inicio' %}"><span>Limpar filtros</span></a>
+        <a class="botao contorno" href="{% url 'contas:inicio' %}">{% icone 'limpar' %}<span>Limpar filtros</span></a>
       {% else %}
         <p>Ainda não há caronas publicadas para os próximos dias. Que tal oferecer a sua?</p>
       {% endif %}

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static icones %}
 
 {% block titulo %}Entrar · BoraJunto{% endblock %}
 
@@ -41,7 +41,7 @@
 
   <p class="aviso">Sua senha não é armazenada pelo aplicativo.</p>
   <input type="hidden" name="next" value="{{ next }}">
-  <button type="submit" class="botao"><span class="giro" aria-hidden="true"></span><span class="rotulo">Entrar</span></button>
+  <button type="submit" class="botao"><span class="giro" aria-hidden="true"></span>{% icone 'entrar' %}<span class="rotulo">Entrar</span></button>
 </form>
 
 <p class="rodape">Só estudantes com vínculo ativo entram na plataforma.</p>

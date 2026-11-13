@@ -9,7 +9,7 @@
   .fantasma { display: grid; place-items: center; height: 44px; border-radius: 22px; background: rgba(255, 255, 255, 0.2); color: #fff; }
   .sino { position: relative; width: 44px; }
   .sino .ponto { position: absolute; top: 9px; right: 10px; width: 9px; height: 9px; border-radius: 5px; background: var(--alerta); border: 2px solid var(--primaria); }
-  .sair { padding: 0 16px; border: 0; font: 500 13px var(--fonte-texto); }
+  .sair { display: flex; align-items: center; gap: var(--icone-gap); padding: 0 16px; border: 0; font: 500 13px var(--fonte-texto); }
 
   .busca { background: #fff; color: var(--tinta); border-radius: 24px; padding: 16px; display: flex; flex-direction: column; }
   .local { display: flex; align-items: center; gap: 12px; padding: 4px 6px 12px; }
@@ -26,7 +26,6 @@
   .principal { padding: 22px 22px 118px; display: flex; flex-direction: column; gap: 14px; }
   .titulo-lista { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
   .titulo-lista h2 { margin: 0; font: 600 16px var(--fonte-titulo); }
-  .titulo-lista a { font: 700 12px var(--fonte-titulo); color: var(--primaria); text-decoration: none; }
   .lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
 
   .vazio { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 32px 24px 26px; border-radius: 24px; background: #fff; text-align: center; }
@@ -51,5 +50,5 @@
   .motorista { display: flex; align-items: center; gap: 10px; padding-top: 13px; border-top: 1px solid var(--linha); font-size: 13px; }
   .motorista .nome { flex: 1; min-width: 0; font-weight: 500; margin-right: 10px; }
   .motorista .nota { margin-left: 5px; font-weight: 400; color: rgba(26, 17, 40, 0.45); }
-  .vagas { padding: 6px 12px; border-radius: 14px; background: var(--superficie); color: var(--primaria); font: 700 12px var(--fonte-titulo); white-space: nowrap; }
-
+  .vagas { display: inline-flex; align-items: center; gap: var(--icone-gap-selo); padding: 6px 12px; border-radius: 14px; background: var(--superficie); color: var(--primaria); font: 700 12px var(--fonte-titulo); white-space: nowrap; }
+  .vagas .ic { stroke-width: 1.5px; }

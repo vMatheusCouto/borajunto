@@ -19,7 +19,7 @@
   .assentos { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
   .assentos li { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 17px; background: var(--primaria-clara); font: 700 11px var(--fonte-titulo); }
   .assentos li.ocupado { background: #fff; color: var(--primaria-escura); }
-  .editar { display: grid; place-items: center; height: 34px; padding: 0 28px; border-radius: 22px; background: var(--primaria-clara); color: #fff; font: 700 11px var(--fonte-titulo); text-decoration: none; }
+  .editar { display: flex; align-items: center; gap: var(--icone-gap); height: 34px; padding: 0 28px; border-radius: 22px; background: var(--primaria-clara); color: #fff; font: 700 11px var(--fonte-titulo); text-decoration: none; }
   .editar[aria-disabled="true"] { opacity: 0.6; }
   .gestao { display: flex; flex-direction: column; align-items: stretch; gap: 10px; padding-top: 14px; }
   .gestao:empty { display: none; }
@@ -45,7 +45,7 @@
   .solicitada form { padding-top: 12px; }
   .solicitada .avaliar { align-self: flex-start; margin-top: 8px; font: 700 13px var(--fonte-titulo); color: var(--primaria); }
   .solicitada .cancelar { width: 100%; height: 44px; border-radius: 22px; background: #fff; border: 1px solid rgba(232, 85, 43, 0.5); color: var(--acento); font-size: 13.5px; }
-  .selo { flex: none; padding: 4px 10px; border-radius: 10px; font: 700 10px var(--fonte-titulo); letter-spacing: 0.3px; text-transform: uppercase; background: var(--linha); color: rgba(19, 18, 40, 0.6); }
+  .selo { flex: none; display: inline-flex; align-items: center; gap: var(--icone-gap-selo); padding: 4px 10px; border-radius: 10px; font: 700 10px var(--fonte-titulo); letter-spacing: 0.3px; text-transform: uppercase; background: var(--linha); color: rgba(19, 18, 40, 0.6); }
   .selo.pendente { background: rgba(255, 206, 61, 0.25); color: #8a6500; }
   .selo.aceita { background: rgba(76, 71, 237, 0.12); color: var(--primaria); }
   .selo.recusada, .selo.cancelada { background: rgba(232, 85, 43, 0.12); color: var(--acento); }
@@ -55,4 +55,4 @@
   .vazio h2 { margin: 0; font: 600 17px var(--fonte-titulo); }
   .vazio p { margin: 0; max-width: 280px; font-size: 13.5px; line-height: 20px; opacity: 0.6; }
   .vazio .botao { height: 44px; margin-top: 10px; font-size: 13.5px; }
-
+  .selo .ic, .editar .ic { stroke-width: 1.5px; }

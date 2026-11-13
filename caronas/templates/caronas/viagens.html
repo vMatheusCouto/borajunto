@@ -1,5 +1,6 @@
+
 {% extends 'base.html' %}
-{% load static %}
+{% load static icones %}
 
 {% block titulo %}Minhas viagens · BoraJunto{% endblock %}
 
@@ -26,19 +27,31 @@
             <strong>{{ carona.origem }} → {{ carona.destino }}</strong>
             <time datetime="{{ carona.data_hora|date:'c' }}">{{ carona.data_hora|time:'H:i' }}</time>
           </div>
+
           <p class="info">{{ carona.data_hora|date:'l, d \d\e F'|lower|capfirst }} · {{ carona.livres|length }} de {{ carona.vagas }} vagas livres</p>
-          {% if carona.status != 'publicada' %}<span class="situacao">{{ carona.get_status_display }}</span>{% endif %}
+
+          {% if carona.status != 'publicada' %}
+            <span class="situacao">{{ carona.get_status_display }}</span>
+          {% endif %}
+
           <div class="rodape">
             <ul class="assentos" aria-label="Vagas">
               {% for reserva in carona.confirmadas %}
                 <li class="ocupado">{{ reserva.passageiro.first_name|slice:':1'|upper }}{{ reserva.passageiro.last_name|slice:':1'|upper }}</li>
               {% endfor %}
+
               {% for vaga in carona.livres %}
                 <li><img src="{% static 'contas/img/vaga.svg' %}" width="16" height="16" alt="Vaga livre"></li>
               {% endfor %}
             </ul>
-            {% if carona.aberta %}<a class="editar" href="{% url 'caronas:editar' carona.pk %}">Editar</a>{% endif %}
+
+            {% if carona.aberta %}
+              <a class="editar" href="{% url 'caronas:editar' carona.pk %}">
+                {% icone 'editar' 14 %}Editar
+              </a>
+            {% endif %}
           </div>
+
           <div class="gestao">
             {% if carona.pode_iniciar %}
               <form method="post" action="{% url 'caronas:iniciar' carona.pk %}">
@@ -51,52 +64,68 @@
                 <button type="submit" class="botao">Concluir carona</button>
               </form>
             {% endif %}
-            {% if carona.aberta %}<a class="cancelar-carona" href="{% url 'caronas:cancelar_carona' carona.pk %}">Cancelar carona</a>{% endif %}
+
+            {% if carona.aberta %}
+              <a class="cancelar-carona" href="{% url 'caronas:cancelar_carona' carona.pk %}">Cancelar carona</a>
+            {% endif %}
           </div>
         </div>
 
         {% if carona.aberta %}
-        <h2>Solicitações pendentes</h2>
-        {% if carona.pendentes %}
-          <ul class="lista">
-            {% for reserva in carona.pendentes %}
-              {% with passageiro=reserva.passageiro %}
-                <li class="solicitacao">
-                  <div class="usuario">
-                    <span class="avatar" aria-hidden="true">{{ passageiro.first_name|slice:':1'|upper }}{{ passageiro.last_name|slice:':1'|upper }}</span>
-                    <div>
-                      <strong>{{ passageiro.get_full_name|default:passageiro.username }}</strong>
-                      {% if passageiro.perfil %}<span>{{ passageiro.perfil.curso|default:'Estudante' }}{% if passageiro.perfil.campus %} · {{ passageiro.perfil.campus }}{% endif %}</span>{% endif %}
+          <h2>Solicitações pendentes</h2>
+
+          {% if carona.pendentes %}
+            <ul class="lista">
+              {% for reserva in carona.pendentes %}
+                {% with passageiro=reserva.passageiro %}
+                  <li class="solicitacao">
+                    <div class="usuario">
+                      <span class="avatar" aria-hidden="true">{{ passageiro.first_name|slice:':1'|upper }}{{ passageiro.last_name|slice:':1'|upper }}</span>
+                      <div>
+                        <strong>{{ passageiro.get_full_name|default:passageiro.username }}</strong>
+                        {% if passageiro.perfil %}
+                          <span>{{ passageiro.perfil.curso|default:'Estudante' }}{% if passageiro.perfil.campus %} · {{ passageiro.perfil.campus }}{% endif %}</span>
+                        {% endif %}
+                      </div>
                     </div>
-                  </div>
-                  <div class="opcoes">
-                    <form method="post" action="{% url 'caronas:recusar' reserva.pk %}">
-                      {% csrf_token %}
-                      <button type="submit" class="botao contorno"><span>Recusar</span></button>
-                    </form>
-                    <form method="post" action="{% url 'caronas:aceitar' reserva.pk %}">
-                      {% csrf_token %}
-                      {% if carona.livres %}
-                        <button type="submit" class="botao">Aceitar</button>
-                      {% else %}
-                        <button type="button" class="botao" aria-disabled="true" disabled>Carona lotada</button>
-                      {% endif %}
-                    </form>
-                  </div>
-                </li>
-              {% endwith %}
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p class="sem-pendentes">Nenhuma solicitação pendente. Você recebe uma notificação quando alguém pedir uma vaga.</p>
-        {% endif %}
+
+                    <div class="opcoes">
+                      <form method="post" action="{% url 'caronas:recusar' reserva.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="botao contorno">
+                          {% icone 'fechar' 16 %}<span>Recusar</span>
+                        </button>
+                      </form>
+
+                      <form method="post" action="{% url 'caronas:aceitar' reserva.pk %}">
+                        {% csrf_token %}
+                        {% if carona.livres %}
+                          <button type="submit" class="botao">
+                            {% icone 'confirmar' 16 %}Aceitar
+                          </button>
+                        {% else %}
+                          <button type="button" class="botao" aria-disabled="true" disabled>
+                            Carona lotada
+                          </button>
+                        {% endif %}
+                      </form>
+                    </div>
+                  </li>
+                {% endwith %}
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="sem-pendentes">Nenhuma solicitação pendente. Você recebe uma notificação quando alguém pedir uma vaga.</p>
+          {% endif %}
         {% endif %}
       </section>
     {% empty %}
       <div class="vazio">
         <h2>Você não tem caronas ativas</h2>
         <p>Ofereça uma carona e as solicitações dos passageiros aparecem aqui.</p>
-        <a class="botao" href="{% url 'caronas:oferecer' %}">+ Oferecer carona</a>
+        <a class="botao" href="{% url 'caronas:oferecer' %}">
+          {% icone 'mais' %}Oferecer carona
+        </a>
       </div>
     {% endfor %}
 
@@ -110,8 +139,12 @@
                 <strong>{{ carona.origem }} → {{ carona.destino }}</strong>
                 <span class="selo {{ carona.status }}">{{ carona.get_status_display }}</span>
               </div>
+
               <p>{{ carona.data_hora|date:'D, d M · H:i'|lower|capfirst }}{% if carona.motivo_cancelamento %} · {{ carona.motivo_cancelamento|truncatechars:60 }}{% endif %}</p>
-              {% if carona.status == 'concluida' %}<a class="avaliar" href="{% url 'avaliacoes:avaliar' carona.pk %}">Avaliar passageiros</a>{% endif %}
+
+              {% if carona.status == 'concluida' %}
+                <a class="avaliar" href="{% url 'avaliacoes:avaliar' carona.pk %}">Avaliar passageiros</a>
+              {% endif %}
             </li>
           {% endfor %}
         </ul>
@@ -126,16 +159,41 @@
             <li class="solicitada">
               <div class="topo">
                 <strong>{{ carona.origem }} → {{ carona.destino }}</strong>
-                <span class="selo {{ reserva.status }}">{% if reserva.status == 'aceita' %}Confirmada{% else %}{{ reserva.get_status_display }}{% endif %}</span>
+
+                <span class="selo {{ reserva.status }}">
+                  {% if reserva.status == 'aceita' %}
+                    {% icone 'confirmado' 12 %}
+                  {% elif reserva.status == 'pendente' %}
+                    {% icone 'relogio' 12 %}
+                  {% elif reserva.status == 'recusada' %}
+                    {% icone 'fechar' 12 %}
+                  {% endif %}
+
+                  {% if reserva.status == 'aceita' %}
+                    Confirmada
+                  {% else %}
+                    {{ reserva.get_status_display }}
+                  {% endif %}
+                </span>
               </div>
+
               <p>{{ carona.data_hora|date:'D, d M · H:i'|lower|capfirst }} · {{ carona.motorista.get_full_name|default:carona.motorista.username }}</p>
+
               {% if reserva.status == 'aceita' and carona.status == 'concluida' %}
                 <a class="avaliar" href="{% url 'avaliacoes:avaliar' carona.pk %}">Avaliar participantes</a>
               {% endif %}
+
               {% if reserva.cancelavel %}
                 <form method="post" action="{% url 'caronas:cancelar' reserva.pk %}">
                   {% csrf_token %}
-                  <button type="submit" class="botao cancelar">{% if reserva.status == 'aceita' %}Cancelar reserva{% else %}Cancelar solicitação{% endif %}</button>
+                  <button type="submit" class="botao cancelar">
+                    {% icone 'fechar' 16 %}
+                    {% if reserva.status == 'aceita' %}
+                      Cancelar reserva
+                    {% else %}
+                      Cancelar solicitação
+                    {% endif %}
+                  </button>
                 </form>
               {% endif %}
             </li>
@@ -146,7 +204,9 @@
       <div class="vazio">
         <h2>Nenhuma vaga solicitada</h2>
         <p>Quando você pedir uma vaga em uma carona, ela aparece aqui com a situação do pedido.</p>
-        <a class="botao" href="{% url 'contas:inicio' %}">Buscar caronas</a>
+        <a class="botao" href="{% url 'contas:inicio' %}">
+          {% icone 'busca' %}Buscar caronas
+        </a>
       </div>
     {% endif %}
   {% endif %}

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static icones %}
 
 {% block titulo %}Perfil · BoraJunto{% endblock %}
 
@@ -42,18 +42,18 @@
   </dl>
 
   <ul class="opcoes">
-    <li><a aria-disabled="true"><span>Editar perfil</span><span class="em-breve">Em breve</span></a></li>
-    <li><a aria-disabled="true"><span>Meus dados do SUAP</span><span class="em-breve">Em breve</span></a></li>
-    <li><a href="{% url 'caronas:viagens' %}"><span>Histórico completo</span><img src="{% static 'contas/img/chevron.svg' %}" width="16" height="16" alt=""></a></li>
-    <li><a aria-disabled="true"><span>Privacidade e contato</span><span class="em-breve">Em breve</span></a></li>
-    <li><a aria-disabled="true"><span>Denunciar um problema</span><span class="em-breve">Em breve</span></a></li>
+    <li><a aria-disabled="true"><span>{% icone 'editar-perfil' %}Editar perfil</span><span class="em-breve">Em breve</span></a></li>
+    <li><a aria-disabled="true"><span>{% icone 'documento' %}Meus dados do SUAP</span><span class="em-breve">Em breve</span></a></li>
+    <li><a href="{% url 'caronas:viagens' %}"><span>{% icone 'historico' %}Histórico completo</span><img src="{% static 'contas/img/chevron.svg' %}" width="16" height="16" alt=""></a></li>
+    <li><a aria-disabled="true"><span>{% icone 'escudo' %}Privacidade e contato</span><span class="em-breve">Em breve</span></a></li>
+    <li><a aria-disabled="true"><span>{% icone 'bandeira' %}Denunciar um problema</span><span class="em-breve">Em breve</span></a></li>
   </ul>
 
   <p class="privacidade">Coletamos apenas os dados necessários ao funcionamento, conforme a LGPD. Seu contato só aparece para quem tem carona confirmada com você.</p>
 
   <form method="post" action="{% url 'contas:sair' %}">
     {% csrf_token %}
-    <button type="submit" class="sair">Encerrar sessão</button>
+    <button type="submit" class="sair">{% icone 'sair' %}Encerrar sessão</button>
   </form>
 </div>
 
