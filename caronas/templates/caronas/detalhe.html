@@ -66,12 +66,35 @@
 
 <div class="rodape">
   {% if carona.motorista == user %}
-    <a class="botao contorno" href="{% url 'caronas:viagens' %}">{% icone 'carro' %}<span>Gerenciar em Minhas viagens</span></a>
+
+    <a class="botao contorno" href="{% url 'caronas:viagens' %}">
+      {% icone 'carro' %}
+      <span>Gerenciar em Minhas viagens</span>
+    </a>
+  {% elif reserva and carona.status == 'concluida' %}
+    <a class="botao" href="{% url 'avaliacoes:avaliar' carona.pk %}">Avaliar participantes</a>
+  {% elif reserva and not reserva.cancelavel %}
+    <p class="situacao">
+      {% if reserva.status == 'aceita' %}
+        Sua vaga está confirmada. Não dá mais para cancelar.
+      {% else %}
+        A carona já está no horário de saída.
+      {% endif %}
+    </p>
   {% elif reserva %}
     <form method="post" action="{% url 'caronas:cancelar' reserva.pk %}">
       {% csrf_token %}
-      <p class="situacao">{% if reserva.status == 'aceita' %}{% icone 'confirmado' 16 %}Sua vaga está confirmada.{% else %}{% icone 'relogio' 16 %}Aguardando a resposta do motorista.{% endif %}</p>
-      <button type="submit" class="botao cancelar">{% icone 'fechar' %}{% if reserva.status == 'aceita' %}Cancelar reserva{% else %}Cancelar solicitação{% endif %}</button>
+      <p class="situacao">
+        {% if reserva.status == 'aceita' %}
+          {% icone 'confirmado' 16 %}Sua vaga está confirmada.
+        {% else %}
+          {% icone 'relogio' 16 %}Aguardando a resposta do motorista.
+        {% endif %}
+      </p>
+      <button type="submit" class="botao cancelar">
+        {% icone 'fechar' %}
+        {% if reserva.status == 'aceita' %}Cancelar reserva{% else %}Cancelar solicitação{% endif %}
+      </button>
     </form>
   {% elif disponivel %}
     <form method="post" action="{% url 'caronas:solicitar' carona.pk %}">

@@ -22,10 +22,10 @@
       {% endif %}
     </div>
     <div class="acoes">
-      <span class="fantasma sino" role="img" aria-label="Notificações{% if notificacoes_nao_lidas %}: há notificações não lidas{% endif %}">
+      <a class="fantasma sino" href="{% url 'notificacoes:lista' %}" aria-label="Notificações{% if notificacoes_nao_lidas %}: há notificações não lidas{% endif %}">
         <img src="{% static 'contas/img/notificacoes.svg' %}" width="20" height="20" alt="">
         {% if notificacoes_nao_lidas %}<span class="ponto"></span>{% endif %}
-      </span>
+      </a>
       <form method="post" action="{% url 'contas:sair' %}">
         {% csrf_token %}
         <button type="submit" class="fantasma sair">{% icone 'sair' 16 %}Sair</button>

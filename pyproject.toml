@@ -4,5 +4,6 @@ version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
     "django>=6.1.2",
+    "django-pwa>=2.0.1",
     "suapy>=1.4.1",
 ]

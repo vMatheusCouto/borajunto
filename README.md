@@ -20,6 +20,18 @@ Fora do MVP: app móvel nativo, chat, localização em tempo real, pagamentos e 
 
 ![Diagrama de casos de uso](docs/diagrama-casos-de-uso.png)
 
+## Diagrama entidade-relacionamento
+
+![Diagrama entidade-relacionamento](docs/diagrama-er.png)
+
+Fonte em [`docs/diagrama-er.drawio`](docs/diagrama-er.drawio).
+
+## Modelo lógico
+
+![Modelo lógico do banco de dados](docs/modelo-logico.png)
+
+Fonte em [`docs/modelo-logico.drawio`](docs/modelo-logico.drawio).
+
 ## Como rodar
 
 Requer Python 3.14 e [uv](https://docs.astral.sh/uv/).
@@ -28,6 +40,12 @@ Requer Python 3.14 e [uv](https://docs.astral.sh/uv/).
 uv sync
 uv run python manage.py migrate
 uv run python manage.py runserver
+```
+
+Os lembretes de 60 minutos antes da carona são gerados por um comando, que deve rodar a cada poucos minutos (por exemplo, no cron):
+
+```bash
+*/5 * * * * cd /caminho/do/borajunto && uv run python manage.py enviar_lembretes
 ```
 
 O login usa a matrícula e a senha do SUAP pela biblioteca [suapy](https://pypi.org/project/suapy/). Para apontar para outra instituição, defina `SUAP_URL`.
