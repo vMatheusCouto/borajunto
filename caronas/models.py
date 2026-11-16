@@ -106,3 +106,11 @@ class Reserva(models.Model):
     def __str__(self):
         return f'{self.passageiro} em {self.carona} ({self.get_status_display()})'
 
+
+
+def caronas_concluidas(usuario):
+    """Quantas caronas concluídas o usuário fez, como motorista ou como passageiro."""
+    como_motorista = Carona.objects.filter(motorista=usuario, status='concluida').count()
+    como_passageiro = Reserva.objects.filter(
+        passageiro=usuario, status='aceita', carona__status='concluida').count()
+    return como_motorista + como_passageiro

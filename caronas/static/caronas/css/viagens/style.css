@@ -28,6 +28,7 @@
   .usuario { display: flex; align-items: center; gap: 12px; }
   .usuario .avatar { width: 46px; height: 46px; border-radius: 23px; font-size: 15px; }
   .usuario strong { display: block; font: 600 15px var(--fonte-titulo); }
+  .usuario a { color: inherit; }
   .usuario div span { display: block; font-size: 12px; line-height: 16.2px; opacity: 0.5; }
   .opcoes { display: flex; gap: 10px; }
   .opcoes form { flex: 1; }

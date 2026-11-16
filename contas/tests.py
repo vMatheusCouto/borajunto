@@ -151,3 +151,70 @@ class InicioTests(TestCase):
                                    mensagem='Sua vaga foi aceita.')
         self.assertContains(self.client.get(reverse('contas:inicio')), 'class="ponto"')
 
+
+
+class PerfilPublicoTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        cls.ana = User.objects.create_user('ana', first_name='Ana', last_name='Souza')
+        cls.lucas = User.objects.create_user('lucas', first_name='Lucas', last_name='Almeida',
+                                             email='lucas@escolar.ifrn.edu.br')
+        Perfil.objects.create(usuario=cls.lucas, matricula='20231014040002',
+                              curso='Informática', campus='PF')
+        outro = User.objects.create_user('outro')
+        amanha = timezone.localtime() + timedelta(days=1)
+
+        def carona(**campos):
+            dados = {'motorista': cls.lucas, 'origem': 'Pau dos Ferros', 'destino': 'Campus Mossoró',
+                     'ponto_encontro': 'Praça da Matriz', 'data_hora': amanha, 'vagas': 3,
+                     **campos}
+            return Carona.objects.create(**dados)
+
+        carona(origem='Próxima')
+        carona(origem='Cancelada', status=Carona.Status.CANCELADA)
+        concluida = carona(origem='Antiga', status=Carona.Status.CONCLUIDA,
+                           data_hora=amanha - timedelta(days=5))
+        Avaliacao.objects.create(carona=concluida, avaliador=cls.ana, avaliado=cls.lucas, nota=4)
+        Avaliacao.objects.create(carona=concluida, avaliador=outro, avaliado=cls.lucas, nota=1,
+                                 removida=True)  # RN21
+
+    def setUp(self):
+        self.client.force_login(self.ana)
+
+    def url(self, usuario):
+        return reverse('contas:perfil_publico', args=[usuario.pk])
+
+    def test_exige_login(self):
+        self.client.logout()
+        resposta = self.client.get(self.url(self.lucas))
+        self.assertRedirects(resposta, reverse('contas:entrar') + '?next=' + self.url(self.lucas))
+
+    def test_mostra_dados_reputacao_e_proximas_caronas(self):  # RF25
+        resposta = self.client.get(self.url(self.lucas))
+        self.assertContains(resposta, '<h1>Lucas Almeida</h1>', html=True)
+        self.assertContains(resposta, 'Informática · Campus PF')
+        self.assertEqual(resposta.context['caronas'], 1)
+        self.assertEqual(resposta.context['reputacao'], {'media': 4, 'quantidade': 1})
+        origens = [c.origem for c in resposta.context['proximas']]
+        self.assertEqual(origens, ['Próxima'])
+        self.assertContains(resposta, 'Denunciar usuário')
+
+    def test_nao_mostra_email_nem_matricula(self):
+        resposta = self.client.get(self.url(self.lucas))
+        self.assertNotContains(resposta, 'lucas@escolar.ifrn.edu.br')
+        self.assertNotContains(resposta, '20231014040002')
+
+    def test_sem_avaliacoes(self):  # RN21
+        resposta = self.client.get(self.url(get_user_model().objects.get(username='outro')))
+        self.assertContains(resposta, 'sem avaliações')
+
+    def test_o_proprio_perfil_redireciona(self):
+        resposta = self.client.get(self.url(self.ana))
+        self.assertRedirects(resposta, reverse('contas:perfil'))
+
+    def test_usuario_inexistente_ou_inativo(self):
+        self.assertEqual(self.client.get(reverse('contas:perfil_publico', args=[9999])).status_code, 404)
+        self.lucas.is_active = False
+        self.lucas.save()
+        self.assertEqual(self.client.get(self.url(self.lucas)).status_code, 404)

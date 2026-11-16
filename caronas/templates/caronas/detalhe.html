@@ -21,7 +21,7 @@
 
 <div class="tela">
   {% with motorista=carona.motorista %}
-    <section class="card motorista" aria-label="Motorista">
+    <a class="card motorista" href="{% url 'contas:perfil_publico' motorista.pk %}" aria-label="Ver perfil do motorista">
       <span class="avatar" aria-hidden="true">{{ motorista.first_name|slice:':1'|upper }}{{ motorista.last_name|slice:':1'|upper }}</span>
       <div>
         <strong>{{ motorista.get_full_name|default:motorista.username }}</strong>
@@ -31,7 +31,7 @@
           · {{ caronas_do_motorista }} carona{{ caronas_do_motorista|pluralize }}{% if motorista.perfil %} · mat. {{ motorista.perfil.matricula|slice:':4' }}****{% endif %}
         </p>
       </div>
-    </section>
+    </a>
   {% endwith %}
 
   <section class="card" aria-label="Trajeto">

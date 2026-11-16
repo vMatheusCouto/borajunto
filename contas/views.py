@@ -1,11 +1,12 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from avaliacoes.models import Avaliacao
 from caronas.forms import BuscaForm
-from caronas.models import Carona, Reserva
+from caronas.models import Carona, caronas_concluidas
 
 from .forms import EntrarForm
 
@@ -45,10 +46,22 @@ def inicio(request):
 
 @login_required
 def perfil(request):
-    como_motorista = Carona.objects.filter(motorista=request.user, status='concluida').count()
-    como_passageiro = Reserva.objects.filter(
-        passageiro=request.user, status='aceita', carona__status='concluida').count()
     return render(request, 'contas/perfil.html', {
-        'caronas': como_motorista + como_passageiro,
+        'caronas': caronas_concluidas(request.user),
         'reputacao': Avaliacao.objects.reputacao(request.user),
+    })
+
+
+@login_required
+def perfil_publico(request, pk):
+    """Perfil de outro estudante: dados do SUAP, reputação e próximas caronas (RF25)."""
+    if pk == request.user.pk:
+        return redirect('contas:perfil')
+
+    pessoa = get_object_or_404(get_user_model(), pk=pk, is_active=True)
+    return render(request, 'contas/perfil_publico.html', {
+        'pessoa': pessoa,
+        'caronas': caronas_concluidas(pessoa),
+        'reputacao': Avaliacao.objects.reputacao(pessoa),
+        'proximas': Carona.objects.disponiveis().filter(motorista=pessoa),
     })

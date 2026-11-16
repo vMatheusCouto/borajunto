@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}{{ pessoa.get_full_name|default:pessoa.username }} · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'contas/css/perfil/style.css' %}">
+<link rel="stylesheet" href="{% static 'contas/css/perfil_publico/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<section class="cabecalho publico">
+  <a class="voltar" href="{% url 'contas:inicio' %}" aria-label="Voltar para o início">
+    <img src="{% static 'contas/img/voltar-claro.svg' %}" width="18" height="18" alt="">
+  </a>
+  <div class="identidade">
+    {% include 'contas/_cabecalho.html' with pessoa=pessoa %}
+  </div>
+</section>
+
+<div class="principal">
+  <dl class="numeros">
+    <div><dt>caronas</dt><dd>{{ caronas }}</dd></div>
+    <div>
+      <dt>{% if reputacao.quantidade %}nota média{% else %}sem avaliações{% endif %}</dt>
+      <dd>{% if reputacao.quantidade %}{{ reputacao.media|floatformat:1 }}{% else %}–{% endif %}</dd>
+    </div>
+    <div><dt>{% if reputacao.quantidade == 1 %}avaliação{% else %}avaliações{% endif %}</dt><dd>{{ reputacao.quantidade }}</dd></div>
+  </dl>
+
+  <section class="proximas" aria-labelledby="titulo-proximas">
+    <h2 id="titulo-proximas">Próximas caronas</h2>
+    {% if proximas %}
+      <ul>
+        {% for carona in proximas %}
+          <li><a href="{% url 'caronas:detalhe' carona.pk %}">
+            <strong>{{ carona.origem }} → {{ carona.destino }}</strong>
+            <span>{{ carona.data_hora|date:'d/m' }} · saída {{ carona.data_hora|time:'H:i' }} · {{ carona.vagas_restantes }} vaga{{ carona.vagas_restantes|pluralize }}</span>
+          </a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Nenhuma carona oferecida nos próximos dias.</p>
+    {% endif %}
+  </section>
+
+  <ul class="opcoes">
+    <li><a aria-disabled="true"><span>Denunciar usuário</span><span class="em-breve">Em breve</span></a></li>
+  </ul>
+
+  <p class="privacidade">O contato só aparece para quem tem carona confirmada com essa pessoa.</p>
+</div>
+
+{% include 'barra.html' with ativa='inicio' %}
+{% endblock %}
