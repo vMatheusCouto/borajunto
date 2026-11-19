@@ -32,6 +32,12 @@ Fonte em [`docs/diagrama-er.drawio`](docs/diagrama-er.drawio).
 
 Fonte em [`docs/modelo-logico.drawio`](docs/modelo-logico.drawio).
 
+## Diagrama de classes
+
+![Diagrama de classes](docs/diagrama-de-classes.png)
+
+Fonte em [`docs/diagrama-de-classes.drawio`](docs/diagrama-de-classes.drawio).
+
 ## Como rodar
 
 Requer Python 3.14 e [uv](https://docs.astral.sh/uv/).
