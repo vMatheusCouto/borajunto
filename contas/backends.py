@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import BaseBackend
 from django.db import transaction
 
-from .models import Perfil
+from .models import Perfil, conta_suspensa
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +35,10 @@ class SuapBackend(BaseBackend):
     def get_user(self, user_id):
         User = get_user_model()
         try:
-            usuario = User.objects.get(pk=user_id)
+            usuario = User.objects.select_related('perfil').get(pk=user_id)
         except User.DoesNotExist:
             return None
-        return usuario if usuario.is_active else None
+        return None if conta_suspensa(usuario) else usuario
 
     @staticmethod
     def _registrar_erro(request, mensagem):

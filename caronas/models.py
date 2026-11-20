@@ -73,6 +73,20 @@ class Carona(models.Model):
     def pode_iniciar(self):
         return self.aberta and timezone.now() >= self.data_hora - self.ANTECEDENCIA_INICIO
 
+    def cancelar(self, motivo, aviso):
+        from notificacoes.models import Notificacao
+
+        ativas = self.reservas.filter(status__in=Reserva.ATIVAS)
+        Notificacao.objects.bulk_create(
+            Notificacao(destinatario_id=passageiro, carona=self,
+                        tipo=Notificacao.Tipo.CANCELAMENTO, mensagem=aviso[:255])
+            for passageiro in ativas.values_list('passageiro', flat=True)
+        )
+        ativas.update(status=Reserva.Status.CANCELADA)
+        self.status = self.Status.CANCELADA
+        self.motivo_cancelamento = motivo
+        self.save()
+
     def atualizar_lotacao(self):
         if not self.aberta:
             return

@@ -305,14 +305,9 @@ def cancelar_carona(request, pk):
             carona = carona_do_motorista(request, pk)
             if carona.aberta:
                 motivo = form.cleaned_data['motivo']
-                notificar_passageiros(
-                    carona, Notificacao.Tipo.CANCELAMENTO,
-                    f'A carona {carona.origem} → {carona.destino} foi cancelada pelo motorista. Motivo: {motivo}'[:255],
-                    status=Reserva.ATIVAS)
-                carona.reservas.filter(status__in=Reserva.ATIVAS).update(status=Reserva.Status.CANCELADA)
-                carona.status = Carona.Status.CANCELADA
-                carona.motivo_cancelamento = motivo
-                carona.save()
+                carona.cancelar(
+                    motivo,
+                    f'A carona {carona.origem} → {carona.destino} foi cancelada pelo motorista. Motivo: {motivo}')
                 messages.success(request, 'Carona cancelada. Os passageiros foram avisados.')
         return redirect('caronas:viagens')
     return render(request, 'caronas/cancelar.html', {'form': form, 'carona': carona})
