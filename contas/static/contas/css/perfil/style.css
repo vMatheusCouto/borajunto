@@ -9,6 +9,8 @@
 
   .principal { display: flex; flex-direction: column; gap: 14px; padding: 20px 22px 118px; }
 
+  .apresentacao { margin: 0; padding: 16px 18px; border-radius: 22px; background: #fff; font-size: 14px; line-height: 21px; white-space: pre-line; overflow-wrap: anywhere; }
+
   .numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0; }
   .numeros div { display: flex; flex-direction: column-reverse; align-items: center; gap: 2px; padding: 16px 8px; border-radius: 22px; background: #fff; }
   .numeros dt { font-size: 11px; opacity: 0.5; }

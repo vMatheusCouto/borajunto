@@ -1,0 +1,1 @@
+<span class="avatar" aria-hidden="true">{% if usuario.perfil.foto_enviada_url %}<img src="{{ usuario.perfil.foto_enviada_url }}" alt="">{% else %}{{ usuario.first_name|slice:':1'|upper }}{{ usuario.last_name|slice:':1'|upper }}{% endif %}</span>

@@ -80,7 +80,7 @@
                 {% with passageiro=reserva.passageiro %}
                   <li class="solicitacao">
                     <div class="usuario">
-                      <span class="avatar" aria-hidden="true">{{ passageiro.first_name|slice:':1'|upper }}{{ passageiro.last_name|slice:':1'|upper }}</span>
+                      {% include 'contas/_avatar.html' with usuario=passageiro %}
                       <div>
                         <strong>{{ passageiro.get_full_name|default:passageiro.username }}</strong>
                         {% if passageiro.perfil %}

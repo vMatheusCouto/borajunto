@@ -10,9 +10,13 @@ ANTECEDENCIA = timedelta(minutes=60)
 def lembrar(carona):
     """Lembrete para o motorista e os passageiros confirmados, uma vez por pessoa (RF22)."""
     from caronas.models import Reserva
+    from contas.models import Perfil
 
     pessoas = [carona.motorista_id, *carona.reservas.filter(
         status=Reserva.Status.ACEITA).values_list('passageiro_id', flat=True)]
+    desligados = set(Perfil.objects.filter(usuario_id__in=pessoas, receber_lembretes=False)
+                     .values_list('usuario_id', flat=True))
+    pessoas = [pessoa for pessoa in pessoas if pessoa not in desligados]
     horario = timezone.localtime(carona.data_hora)
     criados = 0
     for pessoa in pessoas:

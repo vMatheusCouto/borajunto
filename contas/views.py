@@ -1,13 +1,16 @@
+from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from avaliacoes.models import Avaliacao
 from caronas.forms import BuscaForm
 from caronas.models import Carona, Reserva
 
-from .forms import EntrarForm
+from .forms import EditarPerfilForm, EntrarForm
+from .models import Perfil
 
 
 class EntrarView(auth_views.LoginView):
@@ -31,7 +34,8 @@ def inicio(request):
     caronas = (Carona.objects.disponiveis()
                .exclude(motorista=request.user)  # RN09
                .com_reputacao_do_motorista()
-               .select_related('motorista'))
+               .select_related('motorista__perfil')
+               .defer('motorista__perfil__foto'))
     if busca.is_bound and busca.is_valid():
         caronas = busca.filtrar(caronas)
     return render(request, 'contas/inicio.html', {
@@ -52,3 +56,22 @@ def perfil(request):
         'caronas': como_motorista + como_passageiro,
         'reputacao': Avaliacao.objects.reputacao(request.user),
     })
+
+
+@login_required
+def editar_perfil(request):
+    perfil = get_object_or_404(Perfil, usuario=request.user)
+    form = EditarPerfilForm(request.POST or None, request.FILES or None, instance=perfil)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Perfil atualizado.')
+        return redirect('contas:perfil')
+    return render(request, 'contas/editar_perfil.html', {'form': form, 'perfil': perfil})
+
+
+@login_required
+def foto(request, usuario_id):
+    perfil = get_object_or_404(Perfil, usuario_id=usuario_id, foto__isnull=False)
+    resposta = HttpResponse(bytes(perfil.foto), content_type='image/jpeg')
+    resposta['Cache-Control'] = 'private, max-age=31536000, immutable'
+    return resposta

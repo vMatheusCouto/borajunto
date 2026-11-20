@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Editar perfil · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'caronas/css/oferecer/style.css' %}">
+<link rel="stylesheet" href="{% static 'contas/css/editar_perfil/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<form method="post" enctype="multipart/form-data" class="tela" novalidate>
+  {% csrf_token %}
+  <div class="cabecalho">
+    <a class="voltar" href="{% url 'contas:perfil' %}" aria-label="Voltar para o perfil">
+      <img src="{% static 'contas/img/voltar.svg' %}" width="18" height="18" alt="">
+    </a>
+    <h1>Editar perfil</h1>
+    <p>A foto e a apresentação aparecem para quem viaja com você.</p>
+  </div>
+
+  <div class="formulario">
+    <div>
+      <div class="campo foto-campo{% if form.foto.errors %} invalido{% endif %}">
+        <span class="foto" id="previa">
+          {% if perfil.foto_enviada_url %}
+            <img src="{{ perfil.foto_enviada_url }}" alt="">
+          {% else %}
+            <span aria-hidden="true">{{ user.first_name|slice:':1'|upper }}{{ user.last_name|slice:':1'|upper }}</span>
+          {% endif %}
+        </span>
+        <div class="acoes-foto">
+          <label for="{{ form.foto.id_for_label }}" class="botao contorno">Escolher foto</label>
+          {{ form.foto }}
+          {% if perfil.foto_enviada_url %}
+            <label class="remover">{{ form.remover_foto }} Remover foto</label>
+          {% endif %}
+        </div>
+      </div>
+      {% for erro in form.foto.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
+    </div>
+
+    <div>
+      <div class="campo{% if form.apresentacao.errors %} invalido{% endif %}">
+        <label for="{{ form.apresentacao.id_for_label }}">Apresentação</label>
+        {{ form.apresentacao }}
+      </div>
+      {% for erro in form.apresentacao.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
+    </div>
+
+    <label class="campo interruptor" for="{{ form.receber_lembretes.id_for_label }}">
+      <span>
+        <strong>{{ form.receber_lembretes.label }}</strong>
+        <span class="rotulo">Aviso 60 minutos antes da saída. Os outros avisos continuam chegando.</span>
+      </span>
+      {{ form.receber_lembretes }}
+    </label>
+  </div>
+
+  <div class="confirmar">
+    <button type="submit" class="botao">Salvar alterações</button>
+  </div>
+</form>
+
+<script>
+  document.getElementById('{{ form.foto.id_for_label }}').addEventListener('change', function () {
+    const arquivo = this.files[0];
+    if (arquivo) {
+      document.getElementById('previa').innerHTML = '<img src="' + URL.createObjectURL(arquivo) + '" alt="">';
+    }
+  });
+</script>
+{% endblock %}
