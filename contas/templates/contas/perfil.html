@@ -12,7 +12,20 @@
 
 {% block conteudo %}
 <section class="cabecalho">
-  {% include 'contas/_cabecalho.html' with pessoa=user %}
+  <span class="foto">
+    {% if user.perfil.foto_url %}
+      <img src="{{ user.perfil.foto_url }}" alt="">
+    {% else %}
+      <span aria-hidden="true">{{ user.first_name|slice:':1'|upper }}{{ user.last_name|slice:':1'|upper }}</span>
+    {% endif %}
+  </span>
+  <div class="dados">
+    <h1>{{ user.get_full_name|default:user.username }}</h1>
+    {% if user.perfil %}
+      <p>{{ user.perfil.curso|default:'Estudante' }}{% if user.perfil.campus %} · Campus {{ user.perfil.campus }}{% endif %}</p>
+      <span class="vinculo">VÍNCULO ATIVO · SUAP</span>
+    {% endif %}
+  </div>
 </section>
 
 <div class="principal">
