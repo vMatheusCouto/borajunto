@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}{{ pessoa.get_full_name|default:pessoa.username }} · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'contas/css/perfil/style.css' %}">
+<link rel="stylesheet" href="{% static 'contas/css/perfil_publico/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<section class="cabecalho publico">
+  <a class="voltar" href="{% url 'contas:inicio' %}" aria-label="Voltar para o início">
+    <img src="{% static 'contas/img/voltar-claro.svg' %}" width="18" height="18" alt="">
+  </a>
+  <div class="identidade">
+    {% include 'contas/_cabecalho.html' with pessoa=pessoa %}
+  </div>
+</section>
+
+<div class="principal">
+  <dl class="numeros">
+    <div><dt>como motorista</dt><dd>{{ como_motorista }}</dd></div>
+    <div><dt>como passageiro</dt><dd>{{ como_passageiro }}</dd></div>
+    <div>
+      {% if reputacao.quantidade %}
+        <dt>{% if reputacao.quantidade == 1 %}de 1 avaliação{% else %}de {{ reputacao.quantidade }} avaliações{% endif %}</dt>
+        <dd>{{ reputacao.media|floatformat:1 }}</dd>
+      {% else %}
+        <dt>sem avaliações</dt>
+        <dd>–</dd>
+      {% endif %}
+    </div>
+  </dl>
+
+  <dl class="sobre">
+    <div><dt>No BoraJunto desde</dt><dd>{{ pessoa.date_joined|date:'F \d\e Y'|lower }}</dd></div>
+    <div>
+      <dt>Última carona</dt>
+      <dd>{% if ultima_carona %}{{ ultima_carona.data_hora|date:'j \d\e F'|lower }}{% else %}nenhuma ainda{% endif %}</dd>
+    </div>
+    <div><dt>Avaliações feitas</dt><dd>{{ avaliacoes_feitas }}</dd></div>
+    <div><dt>Reservas canceladas</dt><dd>{{ reservas_canceladas }}</dd></div>
+  </dl>
+
+  {% if proximas %}
+    <section class="proximas" aria-labelledby="titulo-proximas">
+      <h2 id="titulo-proximas">Próximas caronas</h2>
+      <ul>
+        {% for carona in proximas %}
+          <li><a href="{% url 'caronas:detalhe' carona.pk %}">
+            <strong>{{ carona.origem }} → {{ carona.destino }}</strong>
+            <span>{{ carona.data_hora|date:'d/m' }} · saída {{ carona.data_hora|time:'H:i' }} · {{ carona.vagas_restantes }} vaga{{ carona.vagas_restantes|pluralize }}</span>
+          </a></li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  <ul class="opcoes">
+    <li><a aria-disabled="true"><span>Denunciar usuário</span><span class="em-breve">Em breve</span></a></li>
+  </ul>
+</div>
+
+{% include 'barra.html' with ativa='inicio' %}
+{% endblock %}
