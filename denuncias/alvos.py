@@ -3,11 +3,11 @@
 from django.contrib.auth import get_user_model
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.utils.dateformat import format as formatar_data
 
 from avaliacoes.models import Avaliacao
 from caronas.models import Carona
-
-TIPOS = ('usuario', 'carona', 'avaliacao')
 
 
 def nome(usuario):
@@ -15,7 +15,8 @@ def nome(usuario):
 
 
 def trajeto(carona):
-    return f'{carona.origem} → {carona.destino}, {carona.data_hora:%d}/{carona.data_hora:%m}'
+    data = formatar_data(timezone.localtime(carona.data_hora), 'j b')  # "30 ago", como no protótipo
+    return f'{carona.origem} → {carona.destino}, {data}'
 
 
 def resolver(request, tipo, pk):
