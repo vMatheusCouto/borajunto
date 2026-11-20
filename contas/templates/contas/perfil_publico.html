@@ -23,17 +23,32 @@
 
 <div class="principal">
   <dl class="numeros">
-    <div><dt>caronas</dt><dd>{{ caronas }}</dd></div>
+    <div><dt>como motorista</dt><dd>{{ como_motorista }}</dd></div>
+    <div><dt>como passageiro</dt><dd>{{ como_passageiro }}</dd></div>
     <div>
-      <dt>{% if reputacao.quantidade %}nota média{% else %}sem avaliações{% endif %}</dt>
-      <dd>{% if reputacao.quantidade %}{{ reputacao.media|floatformat:1 }}{% else %}–{% endif %}</dd>
+      {% if reputacao.quantidade %}
+        <dt>{% if reputacao.quantidade == 1 %}de 1 avaliação{% else %}de {{ reputacao.quantidade }} avaliações{% endif %}</dt>
+        <dd>{{ reputacao.media|floatformat:1 }}</dd>
+      {% else %}
+        <dt>sem avaliações</dt>
+        <dd>–</dd>
+      {% endif %}
     </div>
-    <div><dt>{% if reputacao.quantidade == 1 %}avaliação{% else %}avaliações{% endif %}</dt><dd>{{ reputacao.quantidade }}</dd></div>
   </dl>
 
-  <section class="proximas" aria-labelledby="titulo-proximas">
-    <h2 id="titulo-proximas">Próximas caronas</h2>
-    {% if proximas %}
+  <dl class="sobre">
+    <div><dt>No BoraJunto desde</dt><dd>{{ pessoa.date_joined|date:'F \d\e Y'|lower }}</dd></div>
+    <div>
+      <dt>Última carona</dt>
+      <dd>{% if ultima_carona %}{{ ultima_carona.data_hora|date:'j \d\e F'|lower }}{% else %}nenhuma ainda{% endif %}</dd>
+    </div>
+    <div><dt>Avaliações feitas</dt><dd>{{ avaliacoes_feitas }}</dd></div>
+    <div><dt>Reservas canceladas</dt><dd>{{ reservas_canceladas }}</dd></div>
+  </dl>
+
+  {% if proximas %}
+    <section class="proximas" aria-labelledby="titulo-proximas">
+      <h2 id="titulo-proximas">Próximas caronas</h2>
       <ul>
         {% for carona in proximas %}
           <li><a href="{% url 'caronas:detalhe' carona.pk %}">
@@ -42,16 +57,12 @@
           </a></li>
         {% endfor %}
       </ul>
-    {% else %}
-      <p>Nenhuma carona oferecida nos próximos dias.</p>
-    {% endif %}
-  </section>
+    </section>
+  {% endif %}
 
   <ul class="opcoes">
     <li><a aria-disabled="true"><span>Denunciar usuário</span><span class="em-breve">Em breve</span></a></li>
   </ul>
-
-  <p class="privacidade">O contato só aparece para quem tem carona confirmada com essa pessoa.</p>
 </div>
 
 {% include 'barra.html' with ativa='inicio' %}

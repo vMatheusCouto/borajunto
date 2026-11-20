@@ -1,12 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from avaliacoes.models import Avaliacao
 from caronas.forms import BuscaForm
-from caronas.models import Carona, caronas_concluidas
+from caronas.models import Carona, Reserva, caronas_concluidas
 
 from .forms import EntrarForm
 
@@ -59,9 +60,24 @@ def perfil_publico(request, pk):
         return redirect('contas:perfil')
 
     pessoa = get_object_or_404(get_user_model(), pk=pk, is_active=True)
+    caronas = caronas_concluidas(pessoa)
+    como_motorista = Carona.objects.filter(motorista=pessoa, status='concluida').count()
+
+    # Carona concluída mais recente, como motorista ou como passageiro.
+    ultima_carona = (Carona.objects
+                     .filter(Q(motorista=pessoa) | Q(reservas__passageiro=pessoa, reservas__status='aceita'),
+                             status='concluida')
+                     .order_by('-data_hora')
+                     .first())
+
     return render(request, 'contas/perfil_publico.html', {
         'pessoa': pessoa,
-        'caronas': caronas_concluidas(pessoa),
+        'caronas': caronas,
+        'como_motorista': como_motorista,
+        'como_passageiro': caronas - como_motorista,
         'reputacao': Avaliacao.objects.reputacao(pessoa),
         'proximas': Carona.objects.disponiveis().filter(motorista=pessoa),
+        'ultima_carona': ultima_carona,
+        'avaliacoes_feitas': Avaliacao.objects.validas().filter(avaliador=pessoa).count(),
+        'reservas_canceladas': Reserva.objects.filter(passageiro=pessoa, status='cancelada').count(),
     })

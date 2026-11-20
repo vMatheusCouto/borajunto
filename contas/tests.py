@@ -195,6 +195,10 @@ class PerfilPublicoTests(TestCase):
         self.assertContains(resposta, '<h1>Lucas Almeida</h1>', html=True)
         self.assertContains(resposta, 'Informática · Campus PF')
         self.assertEqual(resposta.context['caronas'], 1)
+        self.assertEqual(resposta.context['como_motorista'], 1)
+        self.assertEqual(resposta.context['como_passageiro'], 0)
+        self.assertEqual(resposta.context['ultima_carona'].origem, 'Antiga')
+        self.assertEqual(resposta.context['avaliacoes_feitas'], 0)
         self.assertEqual(resposta.context['reputacao'], {'media': 4, 'quantidade': 1})
         origens = [c.origem for c in resposta.context['proximas']]
         self.assertEqual(origens, ['Próxima'])
@@ -208,6 +212,8 @@ class PerfilPublicoTests(TestCase):
     def test_sem_avaliacoes(self):  # RN21
         resposta = self.client.get(self.url(get_user_model().objects.get(username='outro')))
         self.assertContains(resposta, 'sem avaliações')
+        self.assertContains(resposta, 'nenhuma ainda')
+        self.assertNotContains(resposta, 'Próximas caronas')  # sem caronas, a seção some
 
     def test_o_proprio_perfil_redireciona(self):
         resposta = self.client.get(self.url(self.ana))
