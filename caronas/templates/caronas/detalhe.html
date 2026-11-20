@@ -62,6 +62,10 @@
     <img src="{% static 'contas/img/aviso.svg' %}" width="17" height="17" alt="">
     <span>O contato do motorista é liberado só depois que ele confirmar sua vaga. A plataforma não é responsável pelo transporte nem por acertos financeiros.</span>
   </p>
+
+  {% if carona.motorista != user %}
+    <a class="denunciar" href="{% url 'denuncias:carona' carona.pk %}?next={{ request.path|urlencode }}">{% icone 'bandeira' 16 %}Denunciar carona</a>
+  {% endif %}
 </div>
 
 <div class="rodape">
