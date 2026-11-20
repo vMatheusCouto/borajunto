@@ -137,3 +137,10 @@ class Reserva(models.Model):
         return (self.status in self.ATIVAS and self.carona.aberta
                 and self.carona.data_hora > timezone.now())
 
+
+def caronas_concluidas(usuario):
+    """Quantas caronas concluídas o usuário fez, como motorista ou como passageiro."""
+    como_motorista = Carona.objects.filter(motorista=usuario, status='concluida').count()
+    como_passageiro = Reserva.objects.filter(
+        passageiro=usuario, status='aceita', carona__status='concluida').count()
+    return como_motorista + como_passageiro

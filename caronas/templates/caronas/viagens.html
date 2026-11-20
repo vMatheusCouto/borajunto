@@ -82,7 +82,7 @@
                     <div class="usuario">
                       <span class="avatar" aria-hidden="true">{{ passageiro.first_name|slice:':1'|upper }}{{ passageiro.last_name|slice:':1'|upper }}</span>
                       <div>
-                        <strong>{{ passageiro.get_full_name|default:passageiro.username }}</strong>
+                        <a href="{% url 'contas:perfil_publico' passageiro.pk %}"><strong>{{ passageiro.get_full_name|default:passageiro.username }}</strong></a>
                         {% if passageiro.perfil %}
                           <span>{{ passageiro.perfil.curso|default:'Estudante' }}{% if passageiro.perfil.campus %} · {{ passageiro.perfil.campus }}{% endif %}</span>
                         {% endif %}
