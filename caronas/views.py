@@ -155,7 +155,7 @@ def cancelar(request, pk):
             )
             messages.success(request, 'Reserva cancelada.' if confirmada else 'Solicitação cancelada.')
     return redirect(reverse('caronas:viagens') + '?aba=solicitei')
-
+    
 
 @login_required
 def viagens(request):
