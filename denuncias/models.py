@@ -6,11 +6,14 @@ class Denuncia(models.Model):
     """Relato de um estudante sobre um usuário, uma carona ou uma avaliação (RF26)."""
 
     class Motivo(models.TextChoices):
-        CONDUTA = 'conduta', 'Conduta inadequada'
         AUSENCIA = 'ausencia', 'Não compareceu'
+        CONDUTA = 'conduta', 'Comportamento inadequado'
+        COBRANCA = 'cobranca', 'Cobrança indevida'
+        PERFIL_FALSO = 'perfil_falso', 'Perfil falso'
+        OUTRO = 'outro', 'Outro'
+        # Motivos anteriores ao protótipo; seguem válidos para denúncias já registradas.
         INFORMACAO_FALSA = 'informacao_falsa', 'Informação falsa'
         SEGURANCA = 'seguranca', 'Risco à segurança'
-        OUTRO = 'outro', 'Outro'
 
     class Status(models.TextChoices):
         PENDENTE = 'pendente', 'Pendente'

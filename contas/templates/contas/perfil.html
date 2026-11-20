@@ -46,7 +46,7 @@
     <li><a aria-disabled="true"><span>{% icone 'documento' %}Meus dados do SUAP</span><span class="em-breve">Em breve</span></a></li>
     <li><a href="{% url 'caronas:viagens' %}"><span>{% icone 'historico' %}Histórico completo</span><img src="{% static 'contas/img/chevron.svg' %}" width="16" height="16" alt=""></a></li>
     <li><a aria-disabled="true"><span>{% icone 'escudo' %}Privacidade e contato</span><span class="em-breve">Em breve</span></a></li>
-    <li><a aria-disabled="true"><span>{% icone 'bandeira' %}Denunciar um problema</span><span class="em-breve">Em breve</span></a></li>
+    <li><a href="{% url 'denuncias:escolher' %}"><span>{% icone 'bandeira' %}Denunciar um problema</span><img src="{% static 'contas/img/chevron.svg' %}" width="16" height="16" alt=""></a></li>
   </ul>
 
   <p class="privacidade">Coletamos apenas os dados necessários ao funcionamento, conforme a LGPD. Seu contato só aparece para quem tem carona confirmada com você.</p>

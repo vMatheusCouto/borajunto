@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Denunciar um problema · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'denuncias/css/registrar/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<form method="post" class="tela" id="denuncia" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ voltar }}">
+
+  <div class="cabecalho">
+    <a class="voltar" href="{{ voltar }}" aria-label="Voltar sem denunciar">
+      <img src="{% static 'contas/img/voltar.svg' %}" width="18" height="18" alt="">
+    </a>
+    <h1>Denunciar um problema</h1>
+    <p>A coordenação vai analisar a situação e agir de acordo.</p>
+  </div>
+
+  <div class="formulario">
+    <fieldset class="tipos{% if form.motivo.errors %} invalido{% endif %}">
+      <legend>Tipo do problema</legend>
+      <div class="chips">
+        {% for opcao in form.motivo %}
+          <input type="radio" name="{{ opcao.data.name }}" value="{{ opcao.data.value }}" id="{{ opcao.id_for_label }}"{% if opcao.data.selected %} checked{% endif %} required>
+          <label for="{{ opcao.id_for_label }}">{{ opcao.choice_label }}</label>
+        {% endfor %}
+      </div>
+    </fieldset>
+    {% for erro in form.motivo.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
+
+    <div class="campo">
+      <span class="rotulo">Sobre</span>
+      <p class="valor">{{ sobre }}</p>
+    </div>
+
+    <div class="campo{% if form.descricao.errors %} invalido{% endif %}">
+      <label for="{{ form.descricao.id_for_label }}">{{ form.descricao.label }}</label>
+      {{ form.descricao }}
+    </div>
+    {% for erro in form.descricao.errors %}<p class="erro">{{ erro }}</p>{% endfor %}
+  </div>
+</form>
+
+<div class="confirmar">
+  <p class="identificada">A denúncia é identificada: seu nome aparece para a coordenação, nunca para a pessoa denunciada.</p>
+  <button type="submit" form="denuncia" class="botao denunciar">Denunciar</button>
+</div>
+{% endblock %}

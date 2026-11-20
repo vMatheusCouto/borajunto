@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Denunciar um problema · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'denuncias/css/registrar/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<div class="tela">
+  <div class="cabecalho">
+    <a class="voltar" href="{% url 'contas:perfil' %}" aria-label="Voltar para o perfil">
+      <img src="{% static 'contas/img/voltar.svg' %}" width="18" height="18" alt="">
+    </a>
+    <h1>Denunciar um problema</h1>
+    <p>Escolha a carona ou a pessoa envolvida. A coordenação vai analisar a situação.</p>
+  </div>
+
+  {% if caronas %}
+    <h2 class="secao">Suas caronas recentes</h2>
+    <ul class="alvos">
+      {% for carona in caronas %}
+        <li class="campo">
+          <span class="rotulo">{{ carona.data_hora|date:'j b' }} · {{ carona.get_status_display|lower }}</span>
+          <p class="valor">{{ carona.origem }} → {{ carona.destino }}</p>
+          <div class="chips">
+            {% if carona.denunciavel %}
+              <a href="{% url 'denuncias:carona' carona.pk %}?next={{ request.path|urlencode }}">A carona</a>
+            {% endif %}
+            {% for pessoa in carona.pessoas %}
+              <a href="{% url 'denuncias:usuario' pessoa.pk %}?next={{ request.path|urlencode }}">{{ pessoa.get_full_name|default:pessoa.username }}</a>
+            {% endfor %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="vazio">Você ainda não participou de nenhuma carona. Para denunciar uma carona publicada, abra o detalhe dela e toque em "Denunciar carona".</p>
+  {% endif %}
+</div>
+{% endblock %}
