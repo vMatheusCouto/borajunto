@@ -74,7 +74,7 @@
             </div>
           </div>
           <div class="motorista">
-            <span class="avatar" aria-hidden="true">{{ carona.motorista.first_name|slice:':1'|upper }}{{ carona.motorista.last_name|slice:':1'|upper }}</span>
+            {% include 'contas/_avatar.html' with usuario=carona.motorista %}
             <span class="nome">
               {{ carona.motorista.get_full_name  |default:carona.motorista.username }}
               <span class="nota">{% if carona.reputacao_quantidade %}★ {{ carona.reputacao_media|floatformat:1 }}{% else %}Sem avaliações{% endif %}</span>

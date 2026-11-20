@@ -13,8 +13,8 @@
 {% block conteudo %}
 <section class="cabecalho">
   <span class="foto">
-    {% if user.perfil.foto_url %}
-      <img src="{{ user.perfil.foto_url }}" alt="">
+    {% if user.perfil.foto_exibida_url %}
+      <img src="{{ user.perfil.foto_exibida_url }}" alt="">
     {% else %}
       <span aria-hidden="true">{{ user.first_name|slice:':1'|upper }}{{ user.last_name|slice:':1'|upper }}</span>
     {% endif %}
@@ -29,6 +29,8 @@
 </section>
 
 <div class="principal">
+  {% if user.perfil.apresentacao %}<p class="apresentacao">{{ user.perfil.apresentacao }}</p>{% endif %}
+
   <dl class="numeros">
     <div><dt>caronas</dt><dd>{{ caronas }}</dd></div>
     <div>
@@ -42,7 +44,11 @@
   </dl>
 
   <ul class="opcoes">
-    <li><a aria-disabled="true"><span>{% icone 'editar-perfil' %}Editar perfil</span><span class="em-breve">Em breve</span></a></li>
+    {% if user.perfil %}
+      <li><a href="{% url 'contas:editar_perfil' %}"><span>{% icone 'editar-perfil' %}Editar perfil</span><img src="{% static 'contas/img/chevron.svg' %}" width="16" height="16" alt=""></a></li>
+    {% else %}
+      <li><a aria-disabled="true"><span>{% icone 'editar-perfil' %}Editar perfil</span><span class="em-breve">Sem perfil</span></a></li>
+    {% endif %}
     <li><a aria-disabled="true"><span>{% icone 'documento' %}Meus dados do SUAP</span><span class="em-breve">Em breve</span></a></li>
     <li><a href="{% url 'caronas:viagens' %}"><span>{% icone 'historico' %}Histórico completo</span><img src="{% static 'contas/img/chevron.svg' %}" width="16" height="16" alt=""></a></li>
     <li><a aria-disabled="true"><span>{% icone 'escudo' %}Privacidade e contato</span><span class="em-breve">Em breve</span></a></li>

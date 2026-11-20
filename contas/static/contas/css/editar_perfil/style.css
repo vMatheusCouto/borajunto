@@ -1,0 +1,23 @@
+
+  .foto-campo { flex-direction: row; align-items: center; gap: 16px; }
+  .foto { display: grid; place-items: center; width: 74px; height: 74px; flex: none; border-radius: 37px; background: var(--avatar); color: var(--primaria-escura); font: 700 24px var(--fonte-titulo); overflow: hidden; }
+  .foto img { width: 100%; height: 100%; object-fit: cover; }
+  .acoes-foto { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+  .acoes-foto .botao { height: 40px; padding: 0 18px; font-size: 14px; opacity: 1; cursor: pointer; }
+  .acoes-foto input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .foto-campo:focus-within { box-shadow: 0 0 0 3px var(--primaria); }
+  .foto-campo .remover { display: flex; align-items: center; gap: 8px; font-size: 13px; opacity: 0.7; cursor: pointer; }
+  .foto-campo .remover input { width: 16px; height: 16px; margin: 0; accent-color: var(--acento); }
+
+  .interruptor { flex-direction: row; justify-content: space-between; align-items: center; gap: 16px; cursor: pointer; }
+  .interruptor > span { display: flex; flex-direction: column; gap: 3px; }
+  .interruptor strong { font: 600 15px var(--fonte-titulo); }
+  .interruptor .rotulo { line-height: 16px; }
+  .interruptor input { appearance: none; position: relative; width: 48px; height: 28px; flex: none; margin: 0; border-radius: 14px; background: var(--borda); cursor: pointer; transition: background-color 0.2s; }
+  .interruptor input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 11px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); transition: transform 0.2s; }
+  .interruptor input:checked { background: var(--primaria); }
+  .interruptor input:checked::after { transform: translateX(20px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .interruptor input, .interruptor input::after { transition: none; }
+  }
