@@ -9,6 +9,7 @@ class Notificacao(models.Model):
         ALTERACAO = 'alteracao', 'Alteração da carona'
         CANCELAMENTO = 'cancelamento', 'Cancelamento'
         LEMBRETE = 'lembrete', 'Lembrete'
+        MODERACAO = 'moderacao', 'Moderação'
 
     destinatario = models.ForeignKey(
         settings.AUTH_USER_MODEL,

@@ -16,6 +16,7 @@
   .icone.alteracao { background: rgba(255, 206, 61, 0.35); color: #8a6d00; }
   .icone.cancelamento { background: rgba(232, 85, 43, 0.12); color: var(--acento); }
   .icone.lembrete { background: var(--superficie); color: var(--tinta); opacity: 0.6; }
+  .icone.moderacao { background: var(--superficie); color: var(--tinta); }
   .notificacao.solicitacao.nao-lida .icone { background: rgba(255, 255, 255, 0.2); color: #fff; opacity: 1; }
 
   .conteudo { min-width: 0; }

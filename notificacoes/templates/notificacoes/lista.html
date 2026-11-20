@@ -30,6 +30,8 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg>
             {% elif notificacao.tipo == 'lembrete' %}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg>
+            {% elif notificacao.tipo == 'moderacao' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"></path></svg>
             {% elif notificacao.tipo == 'alteracao' %}
               <span class="letra">i</span>
             {% else %}
@@ -42,7 +44,7 @@
             <time datetime="{{ notificacao.criada_em|date:'c' }}">{{ notificacao.criada_em|timesince }} atrás</time>
             {% if notificacao.carona %}
               <a class="ver-carona" href="{% url 'caronas:detalhe' notificacao.carona.pk %}">Ver carona</a>
-            {% elif notificacao.tipo != 'lembrete' %}
+            {% elif notificacao.tipo != 'lembrete' and notificacao.tipo != 'moderacao' %}
               <span class="ver-carona indisponivel">Carona não está mais disponível</span>
             {% endif %}
           </div>
