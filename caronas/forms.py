@@ -49,3 +49,27 @@ class VagasForm(forms.Form):
     vagas = forms.IntegerField(label='Vagas disponíveis', min_value=1, max_value=6, initial=3)
     observacoes = forms.CharField(label='Observações', max_length=500, required=False,
                                   widget=forms.Textarea(attrs={'rows': 3}))
+
+
+class EditarCaronaForm(TrajetoForm):
+    """Alteração de uma carona publicada e ainda não iniciada (RF06)."""
+
+    vagas = forms.IntegerField(label='Vagas', min_value=1, max_value=6)
+    observacoes = forms.CharField(label='Observações', max_length=500, required=False,
+                                  widget=forms.Textarea(attrs={'rows': 3}))
+
+    def __init__(self, *args, confirmadas=0, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.confirmadas = confirmadas
+
+    def clean_vagas(self):
+        vagas = self.cleaned_data['vagas']
+        if vagas < self.confirmadas:  # RN13
+            raise forms.ValidationError(
+                f'Já há {self.confirmadas} passageiro(s) confirmado(s); as vagas não podem ficar abaixo disso.')
+        return vagas
+
+
+class CancelarCaronaForm(forms.Form):
+    motivo = forms.CharField(label='Motivo do cancelamento', max_length=500,
+                             widget=forms.Textarea(attrs={'rows': 3}))

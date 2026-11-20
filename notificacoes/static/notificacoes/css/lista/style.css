@@ -1,0 +1,32 @@
+  .tela { display: flex; flex-direction: column; gap: 22px; padding: 18px 22px 40px; }
+
+  .cabecalho { display: flex; align-items: center; gap: 12px; }
+  .voltar { display: grid; place-items: center; width: 40px; height: 40px; margin-left: -8px; border-radius: 20px; transition: background-color 0.2s; flex: none; }
+  .voltar:hover { background: var(--linha); }
+  .cabecalho h1 { margin: 0; font: 700 26px var(--fonte-titulo); letter-spacing: -0.5px; }
+
+  .lista-notificacoes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .notificacao { position: relative; display: flex; align-items: flex-start; gap: 12px; padding: 16px; border-radius: 24px; background-color: #fff; }
+  .notificacao.solicitacao.nao-lida { background: var(--primaria); }
+
+  .icone { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 18px; flex: none; }
+  .icone .letra { font: 700 14px var(--fonte-titulo); line-height: 1; }
+  .icone.solicitacao { background: rgba(76, 71, 237, 0.12); color: var(--primaria); }
+  .icone.decisao { background: rgba(22, 163, 74, 0.15); color: #16a34a; }
+  .icone.alteracao { background: rgba(255, 206, 61, 0.35); color: #8a6d00; }
+  .icone.cancelamento { background: rgba(232, 85, 43, 0.12); color: var(--acento); }
+  .icone.lembrete { background: var(--superficie); color: var(--tinta); opacity: 0.6; }
+  .notificacao.solicitacao.nao-lida .icone { background: rgba(255, 255, 255, 0.2); color: #fff; opacity: 1; }
+
+  .conteudo { min-width: 0; }
+  .notificacao .tipo { margin: 0 0 2px; font: 700 14px var(--fonte-titulo); }
+  .notificacao .mensagem { margin: 0 0 4px; font-weight: 400; font-size: 14px; line-height: 19px; opacity: 0.75; }
+  .notificacao.solicitacao.nao-lida .tipo { color: #fff; }
+  .notificacao.solicitacao.nao-lida .mensagem { color: #fff; opacity: 0.85; }
+  .notificacao.solicitacao.nao-lida time { color: #fff; }
+  .notificacao time { font-size: 12px; opacity: 0.5; }
+  .ver-carona { display: block; margin-top: 6px; font: 700 13px var(--fonte-titulo); color: var(--primaria); }
+  .ver-carona.indisponivel { font-weight: 400; color: inherit; opacity: 0.6; }
+  .notificacao.solicitacao.nao-lida .ver-carona { color: #fff; }
+
+  .vazio { margin: 0; padding: 20px 0; text-align: center; font-size: 13.5px; opacity: 0.6; }

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Avaliar carona · BoraJunto{% endblock %}
+
+{% block cabeca %}
+{% include 'fontes.html' %}
+<link rel="stylesheet" href="{% static 'caronas/css/oferecer/style.css' %}">
+<link rel="stylesheet" href="{% static 'avaliacoes/css/avaliar/style.css' %}">
+{% endblock %}
+
+{% block topo %}{% endblock %}
+
+{% block conteudo %}
+<form method="post" class="tela">
+  {% csrf_token %}
+  <div class="cabecalho">
+    <a class="voltar" href="{% url 'caronas:viagens' %}" aria-label="Voltar para Minhas viagens">
+      <img src="{% static 'contas/img/voltar.svg' %}" width="18" height="18" alt="">
+    </a>
+    <h1>Avaliar carona</h1>
+    <p>{{ carona.origem }} → {{ carona.destino }} · {{ carona.data_hora|date:'d/m H:i' }}</p>
+  </div>
+
+  <div class="formulario">
+    {% for pessoa in avaliados %}
+      <fieldset class="campo avaliado">
+        <legend>
+          <strong>{{ pessoa.get_full_name|default:pessoa.username }}</strong>
+          <span>{{ pessoa.papel }}</span>
+        </legend>
+        <div class="estrelas">
+          {% for nota in notas reversed %}
+            <input type="radio" id="nota-{{ pessoa.pk }}-{{ nota }}" name="nota_{{ pessoa.pk }}" value="{{ nota }}"{% if pessoa.nota_anterior == nota %} checked{% endif %}>
+            <label for="nota-{{ pessoa.pk }}-{{ nota }}" title="{{ nota }} estrela{{ nota|pluralize }}">★<span class="oculto">{{ nota }} estrela{{ nota|pluralize }}</span></label>
+          {% endfor %}
+        </div>
+      </fieldset>
+    {% empty %}
+      <p class="nota">Não há outros participantes confirmados para avaliar nessa carona.</p>
+    {% endfor %}
+    <p class="nota">A nota entra na reputação da pessoa. Se você avaliar de novo nesta carona, a nota nova substitui a anterior.</p>
+  </div>
+
+  {% if avaliados %}
+    <div class="confirmar">
+      <button type="submit" class="botao">Enviar avaliação</button>
+    </div>
+  {% endif %}
+</form>
+{% endblock %}

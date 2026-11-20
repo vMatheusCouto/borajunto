@@ -1,0 +1,11 @@
+  .avaliado { margin: 0; border: 0; gap: 10px; }
+  .avaliado legend { float: left; width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 0; }
+  .avaliado legend strong { font: 600 15px var(--fonte-titulo); }
+  .avaliado legend span { font-size: 12px; opacity: 0.5; }
+  /* As estrelas vêm da maior para a menor e são invertidas, para o ~ pintar as anteriores. */
+  .estrelas { clear: both; display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; }
+  .estrelas input { position: absolute; opacity: 0; pointer-events: none; }
+  .estrelas label { font-size: 32px; line-height: 1; color: var(--avatar); cursor: pointer; opacity: 1; transition: color 0.15s; }
+  .estrelas input:checked ~ label, .estrelas label:hover, .estrelas label:hover ~ label { color: var(--alerta); }
+  .estrelas input:focus-visible + label { outline: 3px solid var(--primaria); outline-offset: 2px; border-radius: 6px; }
+  .oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
