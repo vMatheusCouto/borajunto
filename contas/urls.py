@@ -8,7 +8,6 @@ app_name = 'contas'
 urlpatterns = [
     path('', views.inicio, name='inicio'),
     path('perfil/', views.perfil, name='perfil'),
-    path('perfil/<int:pk>/', views.perfil_publico, name='perfil_publico'),
     path('entrar/', views.EntrarView.as_view(), name='entrar'),
     path('sair/', auth_views.LogoutView.as_view(), name='sair'),
 ]
